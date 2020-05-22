@@ -195,36 +195,42 @@ class PreProcess(nn.Module):
         self.std = std or (0.229, 0.224, 0.225)
         self.trans_func = trans.Normalize(self.mean, self.std)
 
-    def forward(self, image_list, max_size):
+    def forward(self, image_list, target_list, max_size):
         """
 
-        :param image_list: List[Tensor[C, H, W]]
+        :param image_list: List[Tensor[C, H, W]]  const
+        :param target_list: List[Dict("boxes"...)]  const
         :return: image_size_ori: tuple(H, W), image: (C, H, W)"""
 
         image_sizes_ori = []
         image_sizes = []
         images = []
-        for image in image_list:
+        targets = []
+        for i, image in enumerate(image_list):
             image = self.trans_func(image)
             image_sizes_ori.append(image.shape[-2:])
-            image = self.resize_max(image, max_size, max_size)
+            image, target = self.resize_max(image, target_list[i] if target_list is not None else None,
+                                            max_size, max_size)
             image_sizes.append(image.shape[-2:])
             image = self.zero_padding(image)
             images.append(image)
+            if target_list is not None:
+                targets.append(target)
 
-        return ImageList(torch.stack(images, dim=0), image_sizes_ori, image_sizes)
+        return ImageList(torch.stack(images, dim=0), image_sizes_ori, image_sizes), targets if targets else None
 
     @staticmethod
-    def resize_max(image, max_width=None, max_height=None):
+    def resize_max(image, target=None, max_width=None, max_height=None):
         """将图像resize成最大最小不超过max_width, max_height的图像
 
-        :param image: shape(C, H, W).
+        :param image: shape(C, H, W). const
+        :param target: dict("boxes"). const
         :param max_width: int
         :param max_height: int
         :return: shape(C, H, W).
         """
         # 1. 输入
-        height, width = image.shape[-2:]
+        height, width = image.shape[-2:]  # original
         max_width = max_width or width
         max_height = max_height or height
         # 2. 算法
@@ -233,9 +239,16 @@ class PreProcess(nn.Module):
         if out_h > max_height:
             out_h = max_height
             out_w = width / height * max_height
+        out_h, out_w = int(out_h), int(out_w)
         image = F.interpolate(
-            image[None], (int(out_h), int(out_w)), mode='bilinear', align_corners=False)[0]
-        return image
+            image[None], (out_h, out_w), mode='bilinear', align_corners=False)[0]
+        if target is not None:
+            target = {
+                "labels": target["labels"],  # 可以clone()
+                "boxes": target["boxes"].clone()
+            }
+            target["boxes"] = target["boxes"] * out_h / height
+        return image, target
 
     @staticmethod
     def zero_padding(image, padding_value=0., max_padding=None):

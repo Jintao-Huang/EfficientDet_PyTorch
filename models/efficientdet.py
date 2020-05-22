@@ -81,16 +81,19 @@ class EfficientDet(nn.Module):
         self.loss_fn = FocalLoss(alpha=0.25, gamma=2, divide_line=1 / 9)
         self.postprocess = PostProcess()
 
-    def forward(self, image_list, targets=None, score_thresh=0.5, nms_thresh=0.5):
+    def forward(self, image_list, targets=None, image_size=None, score_thresh=None, nms_thresh=None):
         """
 
         :param image_list: List[Tensor[C, H, W]]  [0., 1.]
         :param targets: Dict['labels': List[Tensor[NUMi]], 'boxes': List[Tensor[NUMi, 4]]]
             boxes: left, top, right, bottom
-        :return: loss: Dict / result: Dict
+        :param image_size: int. 真实输入图片的大小
+        :return: train模式: loss: Dict
+                eval模式: result: Dict
         """
         assert isinstance(image_list[0], torch.Tensor)
-        image_list = self.preprocess(image_list, self.image_size)
+        image_size = image_size or self.image_size
+        image_list, targets = self.preprocess(image_list, targets, image_size)
         x = image_list.tensors
         features = self.backbone(x)
         classifications = self.classifier(features)
@@ -100,18 +103,20 @@ class EfficientDet(nn.Module):
         # 预训练模型的顺序 -> 当前模型顺序
         # y_reg, x_reg, h_reg, w_reg -> x_reg, y_reg, w_reg, h_reg
         regressions[..., 0::2], regressions[..., 1::2] = regressions[..., 1::2], regressions[..., 0::2].clone()
-        if self.training:
-            assert targets is not None, "targets is None"
+        if targets is not None:
+            if score_thresh is not None or nms_thresh is not None:
+                print("Warning: no need to transfer score_thresh or nms_thresh")
             loss = self.loss_fn(classifications, regressions, anchors, targets)
             return loss
         else:
-            assert targets is None, "targets is not None"
+            score_thresh = score_thresh or 0.5
+            nms_thresh = nms_thresh or 0.5
             result = self.postprocess(image_list, classifications, regressions, anchors, score_thresh, nms_thresh)
             return result
 
 
 def _efficientdet(model_name, pretrained=False, progress=True,
-                  num_classes=90, pretrained_backbone=True, image_size=None, norm_layer=None, **kwargs):
+                  num_classes=90, pretrained_backbone=True, norm_layer=None, **kwargs):
     if pretrained is True:
         norm_layer = norm_layer or FrozenBatchNorm2d
     else:
@@ -121,8 +126,6 @@ def _efficientdet(model_name, pretrained=False, progress=True,
         pretrained_backbone = False
 
     strict = kwargs.pop("strict", True)
-    if image_size:
-        kwargs['image_size'] = image_size
     kwargs['pretrained_backbone'] = pretrained_backbone
 
     config = dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',
@@ -145,48 +148,48 @@ def _efficientdet(model_name, pretrained=False, progress=True,
 
 
 def efficientdet_d0(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d0", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d1(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d1", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d2(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d2", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d3(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d3", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d4(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d4", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d5(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d5", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d6(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d6", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)
 
 
 def efficientdet_d7(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    image_size=None, norm_layer=None, **kwargs):
+                    norm_layer=None, **kwargs):
     return _efficientdet("efficientdet_d7", pretrained, progress, num_classes, pretrained_backbone,
-                         image_size, norm_layer, **kwargs)
+                         norm_layer, **kwargs)

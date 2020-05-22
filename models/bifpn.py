@@ -61,7 +61,7 @@ class DepthSeparableConv2d(nn.Sequential):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride):
         depthwise_conv = Conv2dSamePadding(in_channels, in_channels, kernel_size, stride, in_channels, False)
-        pointwise_conv = Conv2dSamePadding(in_channels, out_channels, 1, 1, 1, True)
+        pointwise_conv = Conv2dSamePadding(in_channels, out_channels, 1, 1, 1, True)  # 可改为False
         super(DepthSeparableConv2d, self).__init__(
             OrderedDict({
                 "depthwise_conv": depthwise_conv,
