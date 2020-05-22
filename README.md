@@ -27,3 +27,12 @@ python3 pred_image.py
 python3 easy_examples.py
 ```
 
+## 性能
+
+![](./docs/性能对比可视化.png)
+
+#### d0效果
+
+![](./images/1.png)
+
+![](./images/1_d0.png)
