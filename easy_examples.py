@@ -2,7 +2,7 @@
 # Time: 2020-5-22
 
 from models.efficientdet import efficientdet_d0
-from display.display import pil_to_cv
+from utils.display import pil_to_cv
 import torch
 from PIL import Image
 import torchvision.transforms.transforms as trans

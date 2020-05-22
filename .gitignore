@@ -1,8 +1,7 @@
 easy_read/
 .idea/
 __pycache__/
-test.py
-test2.py
 weights/
 official_implement/
 video/
+trash/

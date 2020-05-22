@@ -28,6 +28,11 @@ class EfficientNetBackBoneWithBiFPN(nn.Sequential):
         fpn_norm_layer = kwargs.pop("fpn_norm_layer", nn.BatchNorm2d)
         # create modules
         backbone = _efficientnet(backbone_name, pretrained_backbone, FrozenBatchNorm2d, **kwargs)
+        # freeze layers (自己看效果)进行freeze
+        # for name, parameter in backbone.named_parameters():
+        #     if 'conv_first' in name or "layer1" in name:  # or "layer2" in name
+        #         parameter.requires_grad_(False)
+
         return_layers = {"layer3": "P3", "layer5": "P4", "layer7": "P5"}  # "layer2": "P2",
         in_channels_list = efficientnet_out_channels[backbone_name]  # bifpn
         super(EfficientNetBackBoneWithBiFPN, self).__init__(OrderedDict({

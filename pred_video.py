@@ -2,11 +2,12 @@
 # Time: 2020-5-22
 
 from models.efficientdet import efficientdet_d0
-from display.display import draw_target_in_image, cv_to_pil
+from utils.display import draw_target_in_image, cv_to_pil
 import torch
 import torchvision.transforms.transforms as trans
 import cv2 as cv
 import time
+import os
 
 # -------------------------- 参数
 video_path = "video/1.mp4"
@@ -14,6 +15,8 @@ video_out_path = video_path[:-4] + "_out" + video_path[-4:]
 score_thresh = 0.35
 nms_thresh = 0.5
 # --------------------------
+if os.path.exists(video_out_path):
+    raise FileExistsError("%s is exists" % video_out_path)
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
@@ -40,7 +43,7 @@ for i in range(frame_num):
         target = model([image], image_size=max(image.shape),
                        score_thresh=score_thresh, nms_thresh=nms_thresh)[0]
 
-    print("\r>> %d / %d. 处理时间: %f" % (i + 1, frame_num, time.time() - start), end="")
+    print("\r>> %d / %d. 处理时间: %f" % (i + 1, frame_num, time.time() - start), end="", flush=True)
     new_image = draw_target_in_image(image_o, target)
     out.write(new_image)
 print()
