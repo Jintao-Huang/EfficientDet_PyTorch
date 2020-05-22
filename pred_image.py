@@ -23,7 +23,7 @@ with Image.open(image_fname) as image:
 model = efficientdet_d0(True).to(device)
 model.eval()
 with torch.no_grad():
-    target = model([image], image_size=1920, score_thresh=0.2, nms_thresh=0.2)[0]
+    target = model([image], image_size=max(image.shape), score_thresh=0.2, nms_thresh=0.2)[0]
 
 # draw
 image = draw_target_in_image(image_o, target)

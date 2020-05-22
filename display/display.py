@@ -3,6 +3,7 @@
 
 import numpy as np
 import cv2 as cv
+from PIL import Image
 
 
 def imwrite(image, filename):
@@ -55,6 +56,22 @@ def pil_to_cv(img):
     else:
         raise ValueError("img.mode nonsupport")
     return arr
+
+
+def cv_to_pil(arr):
+    """转cv到PIL.Image (Turn The Image from CV to PIL)
+
+    :param arr: ndarray. BGR, BGRA, L
+    :return: PIL.Image. RGB, RGBA,L
+    """
+
+    if arr.ndim == 2:
+        pass
+    elif arr.ndim == 3:
+        arr = cv.cvtColor(arr, cv.COLOR_BGR2RGB)
+    else:  # 4
+        arr = cv.cvtColor(arr, cv.COLOR_BGRA2RGBA)
+    return Image.fromarray(arr)
 
 
 def draw_target_in_image(image_o, target, get_color=None, labels_map=None):

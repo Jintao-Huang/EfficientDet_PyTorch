@@ -69,7 +69,7 @@ class EfficientDet(nn.Module):
         self.image_size = backbone_kwargs['image_size']
         # (2^(1/3)) ^ (0|1|2)
         anchor_scales = anchor_scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))  # scale on a single feature
-        anchor_aspect_ratios = anchor_aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))  # H / W
+        anchor_aspect_ratios = anchor_aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))  # H, W
         num_anchor = len(anchor_scales) * len(anchor_aspect_ratios)
         self.preprocess = PreProcess(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
         self.backbone = EfficientNetBackBoneWithBiFPN(**backbone_kwargs)
@@ -93,6 +93,7 @@ class EfficientDet(nn.Module):
         """
         assert isinstance(image_list[0], torch.Tensor)
         image_size = image_size or self.image_size
+        image_size = min(1920, image_size // 128 * 128)  # 需要被128整除
         image_list, targets = self.preprocess(image_list, targets, image_size)
         x = image_list.tensors
         features = self.backbone(x)

@@ -22,12 +22,18 @@ https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch
 python3 pred_image.py
 ```
 
-#### 2. 简单的训练案例(Simple training cases)
+#### 2. 预测视频(Predict video)
+```
+python3 pred_video.py
+```
+
+#### 3. 简单的训练案例(Simple training cases)
 ```
 python3 easy_examples.py
 ```
 
-## 性能
+## 性能 
+如果打不开可在`images/`与`docs/`文件夹中查看  
 
 ![](./docs/性能对比可视化.png)
 
