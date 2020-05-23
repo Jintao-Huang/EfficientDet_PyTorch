@@ -2,11 +2,14 @@
 
 
 ## Reference
-1. 参考(reference): 
+1. 论文(paper):   
+https://arxiv.org/pdf/1911.09070.pdf  
+
+2. 代码参考(reference code):  
 https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch
 
-2. 预训练模型来自(The pre-training model comes from): 
-https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch  
+3. 预训练模型来自(The pre-training model comes from):  
+https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch   
   因为修改了模型，所以我把预训练模型的state_dict进行了重组，并进行发布
   (Because I changed the model, I reorganized the state_dict for the pretraining model and release it)  
 
