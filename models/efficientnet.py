@@ -8,8 +8,7 @@ from torch.autograd import Function
 import math
 import torchvision.transforms.transforms as trans
 
-__all__ = ["preprocess", "load_params_by_order", "load_params_from_file_by_order",
-           "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
+__all__ = ["preprocess", "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
            "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
 config_dict = {
@@ -28,21 +27,21 @@ config_dict = {
 
 model_urls = {
     'efficientnet_b0':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b0-355c32eb.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b0.pth',
     'efficientnet_b1':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b1-f1951068.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b1.pth',
     'efficientnet_b2':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b2-8bb594d6.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b2.pth',
     'efficientnet_b3':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b3-5fb5a3c3.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b3.pth',
     'efficientnet_b4':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b4-6ed6700e.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b4.pth',
     'efficientnet_b5':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b5-b6417697.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b5.pth',
     'efficientnet_b6':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b6-c76e70fd.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b6.pth',
     'efficientnet_b7':
-        'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b7-dcc49843.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b7.pth',
 }
 
 
@@ -64,25 +63,6 @@ def preprocess(images, image_size):
             image = image.convert(mode="RGB")
         output.append(trans_func(image))
     return torch.stack(output, dim=0)
-
-
-def load_params_by_order(model, load_state_dict, strict=True):
-    """The parameter name of the pre-training model is different from the parameter name of the model"""
-    load_keys = list(load_state_dict.keys())
-    model_keys = list(model.state_dict().keys())
-    if strict:
-        assert len(load_keys) == len(model_keys)
-    for load_key, model_key in zip(load_keys, model_keys):
-        load_state_dict[model_key] = load_state_dict.pop(load_key)
-
-    return model.load_state_dict(load_state_dict, strict)
-
-
-def load_params_from_file_by_order(model, filename, strict=True):
-    """The parameter name of the pre-training model is different from the parameter name of the model"""
-    load_state_dict = torch.load(filename)
-
-    return load_params_by_order(model, load_state_dict, strict)
 
 
 def get_same_padding(in_size, kernel_size, stride):
@@ -332,7 +312,7 @@ def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000,
     model = EfficientNet(num_classes, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
-        load_params_by_order(model, state_dict, strict)
+        model.load_state_dict(state_dict, strict)
 
     return model
 
