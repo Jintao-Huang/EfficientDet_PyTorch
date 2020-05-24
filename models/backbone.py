@@ -31,7 +31,7 @@ class EfficientNetBackBoneWithBiFPN(nn.Sequential):
             backbone_norm_layer = FrozenBatchNorm2d
         else:
             backbone_norm_layer = nn.BatchNorm2d
-        backbone = _efficientnet(backbone_name, pretrained_backbone, backbone_norm_layer, **kwargs)
+        backbone = _efficientnet(backbone_name, pretrained_backbone, norm_layer=backbone_norm_layer, **kwargs)
         # freeze layers (自己看效果)进行freeze
         # for name, parameter in backbone.named_parameters():
         #     if 'conv_first' in name or "layer1" in name:  # or "layer2" in name
