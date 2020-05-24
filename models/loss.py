@@ -74,7 +74,7 @@ class FocalLoss(nn.Module):
                 labels = torch.zeros_like(classification, device=device)
                 class_loss_total.append(weighted_binary_focal_loss(
                     classification, labels, self.alpha, self.gamma, reduction='sum'))
-                reg_loss_total.append(torch.tensor(0.))
+                reg_loss_total.append(torch.tensor(0.).to(device))
                 continue
             # ---------------------------------------- class_loss
             iou, matched = box_iou(anchors, boxes_ori).max(dim=1)  # 每个anchors只能对应一个boxes
@@ -85,11 +85,14 @@ class FocalLoss(nn.Module):
             labels[iou < 0.4] = 0  # 负样本
             class_loss_total.append(weighted_binary_focal_loss(
                 classification, labels, self.alpha, self.gamma, reduction='sum') /
-                                    torch.nonzero(positive_idxs).shape[0])
+                                    max(torch.nonzero(positive_idxs).shape[0], 1))
             # ---------------------------------------- reg_loss
             boxes = boxes_ori[matched][positive_idxs]
-            anchors = anchors[positive_idxs]
-            reg_true = encode_boxes(boxes, anchors)
+            if boxes.shape[0] == 0:
+                reg_loss_total.append(torch.tensor(0.).to(device))
+                continue
+            anchors_pos = anchors[positive_idxs]
+            reg_true = encode_boxes(boxes, anchors_pos)
             regression = regression[positive_idxs]
             reg_loss_total.append(smooth_l1_loss(regression, reg_true, divide_line=self.divide_line))
 
