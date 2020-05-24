@@ -6,7 +6,6 @@ from .backbone import EfficientNetBackBoneWithBiFPN
 from .anchor import AnchorGenerator
 from .classifier_regressor import Classifier, Regressor
 from .loss import FocalLoss
-from .efficientnet import load_params_by_order
 from .utils import load_state_dict_from_url, PreProcess, PostProcess, FrozenBatchNorm2d
 
 model_urls = {
@@ -145,7 +144,8 @@ def _efficientdet(model_name, pretrained=False, progress=True,
     model = EfficientDet(backbone_kwargs, num_classes, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
-        load_params_by_order(model, state_dict, strict)
+        model.load_state_dict(state_dict, strict)
+
     return model
 
 
