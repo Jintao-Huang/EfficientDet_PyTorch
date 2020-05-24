@@ -31,7 +31,7 @@ targets = [{
 }]
 
 # train
-model = efficientdet_d0(True, norm_layer=FrozenBatchNorm2d).to(device)
+model = efficientdet_d0(True).to(device)
 optim = torch.optim.Adam(model.parameters(), 5e-4)
 for i in range(20):
     optim.zero_grad()

@@ -21,21 +21,26 @@ efficientnet_out_channels = {
 
 
 class EfficientNetBackBoneWithBiFPN(nn.Sequential):
-    def __init__(self, backbone_name, pretrained_backbone, fpn_channels, fpn_num_repeat, image_size, **kwargs):
-        kwargs['image_size'] = image_size
-        self.fpn_channels = fpn_channels
-        self.image_size = image_size
-        fpn_norm_layer = kwargs.pop("fpn_norm_layer", nn.BatchNorm2d)
+    def __init__(self, config):
+
+        backbone_name = config['backbone_name']
+        pretrained_backbone = config['pretrained_backbone']
+        backbone_norm_layer = config["backbone_norm_layer"]
+        image_size = config['image_size']
+        backbone_freeze = config['backbone_freeze']
+        # -------------------------
+        fpn_norm_layer = config["other_norm_layer"]
+        fpn_channels = config['fpn_channels']
+        fpn_num_repeat = config['fpn_num_repeat']
+
         # create modules
-        if pretrained_backbone:
-            backbone_norm_layer = FrozenBatchNorm2d
-        else:
-            backbone_norm_layer = nn.BatchNorm2d
-        backbone = _efficientnet(backbone_name, pretrained_backbone, norm_layer=backbone_norm_layer, **kwargs)
+        backbone = _efficientnet(backbone_name, pretrained_backbone,
+                                 norm_layer=backbone_norm_layer, image_size=image_size)
         # freeze layers (自己看效果)进行freeze
-        # for name, parameter in backbone.named_parameters():
-        #     if 'conv_first' in name or "layer1" in name:  # or "layer2" in name
-        #         parameter.requires_grad_(False)
+        for freeze_layer in backbone_freeze:
+            for name, parameter in backbone.named_parameters():
+                if freeze_layer in name:
+                    parameter.requires_grad_(False)
 
         return_layers = {"layer3": "P3", "layer5": "P4", "layer7": "P5"}  # "layer2": "P2",
         in_channels_list = efficientnet_out_channels[backbone_name]  # bifpn

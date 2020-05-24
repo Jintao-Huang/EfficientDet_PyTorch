@@ -6,7 +6,8 @@ from .backbone import EfficientNetBackBoneWithBiFPN
 from .anchor import AnchorGenerator
 from .classifier_regressor import Classifier, Regressor
 from .loss import FocalLoss
-from .utils import load_state_dict_from_url, PreProcess, PostProcess, FrozenBatchNorm2d
+from .utils import load_state_dict_from_url, PreProcess, PostProcess
+from .default_config import default_config, config_dict
 
 model_urls = {
     'efficientdet_d0':
@@ -27,55 +28,30 @@ model_urls = {
         'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d7.pth',
 }
 
-# 官方配置  official configuration
-# config_dict = {
-#     # resolution[% 128 == 0], backbone, fpn_channels, fpn_num_repeat, regressor_classifier_num_repeat,
-#     # anchor_base_scale(anchor_size / stride)(基准尺度)
-#     'efficientdet_d0': (512, 'efficientnet_b0', 64, *2, 3, 4.),  #
-#     'efficientdet_d1': (640, 'efficientnet_b1', 88, *3, 3, 4.),  #
-#     'efficientdet_d2': (768, 'efficientnet_b2', 112, *4, 3, 4.),  #
-#     'efficientdet_d3': (896, 'efficientnet_b3', 160, *5, 4, 4.),  #
-#     'efficientdet_d4': (1024, 'efficientnet_b4', 224, *6, 4, 4.),  #
-#     'efficientdet_d5': (1280, 'efficientnet_b5', 288, 7, 4, 4.),
-#     'efficientdet_d6': (*1408, 'efficientnet_b6', 384, 8, 5, 4.),  #
-#     'efficientdet_d7': (1536, 'efficientnet_b6', 384, 8, 5, 5.)
-# }
-
-
-config_dict = {
-    # resolution[% 128 == 0], backbone, fpn_channels, fpn_num_repeat, regressor_classifier_num_repeat,
-    # anchor_base_scale(anchor_size / stride)(基准尺度)
-    'efficientdet_d0': (512, 'efficientnet_b0', 64, 3, 3, 4.),  #
-    'efficientdet_d1': (640, 'efficientnet_b1', 88, 4, 3, 4.),  #
-    'efficientdet_d2': (768, 'efficientnet_b2', 112, 5, 3, 4.),  #
-    'efficientdet_d3': (896, 'efficientnet_b3', 160, 6, 4, 4.),  #
-    'efficientdet_d4': (1024, 'efficientnet_b4', 224, 7, 4, 4.),  #
-    'efficientdet_d5': (1280, 'efficientnet_b5', 288, 7, 4, 4.),
-    'efficientdet_d6': (1280, 'efficientnet_b6', 384, 8, 5, 4.),  #
-    'efficientdet_d7': (1536, 'efficientnet_b6', 384, 8, 5, 5.)
-}
-
 
 class EfficientDet(nn.Module):
-    def __init__(self, backbone_kwargs, num_classes,
-                 regressor_classifier_num_repeat, anchor_base_scale,
-                 anchor_scales=None, anchor_aspect_ratios=None, norm_layer=None):
+    def __init__(self, num_classes, config):
         """please use _efficientdet()"""
         super(EfficientDet, self).__init__()
 
-        norm_layer = norm_layer or nn.BatchNorm2d
-        fpn_channels = backbone_kwargs['fpn_channels']
-        self.image_size = backbone_kwargs['image_size']
+        self.image_size = config['image_size']
+        fpn_channels = config['fpn_channels']
+        anchor_scales = config['anchor_scales']
+        anchor_aspect_ratios = config['anchor_aspect_ratios']
+        anchor_base_scale = config['anchor_base_scale']
+        regressor_classifier_num_repeat = config['regressor_classifier_num_repeat']
+        other_norm_layer = config['other_norm_layer']
+
         # (2^(1/3)) ^ (0|1|2)
         anchor_scales = anchor_scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))  # scale on a single feature
         anchor_aspect_ratios = anchor_aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))  # H, W
         num_anchor = len(anchor_scales) * len(anchor_aspect_ratios)
         self.preprocess = PreProcess(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
-        self.backbone = EfficientNetBackBoneWithBiFPN(**backbone_kwargs)
+        self.backbone = EfficientNetBackBoneWithBiFPN(config)
         self.classifier = Classifier(fpn_channels, num_anchor, num_classes, regressor_classifier_num_repeat,
-                                     1e-2, 1e-3, norm_layer)
+                                     1e-2, 1e-3, other_norm_layer)
         self.regressor = Regressor(fpn_channels, num_anchor, regressor_classifier_num_repeat,
-                                   1e-2, 1e-3, norm_layer)
+                                   1e-2, 1e-3, other_norm_layer)
         self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, [3, 4, 5, 6, 7])
         self.loss_fn = FocalLoss(alpha=0.25, gamma=2, divide_line=1 / 9)
         self.postprocess = PostProcess()
@@ -116,82 +92,49 @@ class EfficientDet(nn.Module):
             return result
 
 
-def _efficientdet(model_name, pretrained=False, progress=True,
-                  num_classes=90, pretrained_backbone=True, norm_layer=None, **kwargs):
-    if pretrained is True:
-        norm_layer = norm_layer or FrozenBatchNorm2d
-    else:
-        norm_layer = norm_layer or nn.BatchNorm2d
-
+def _efficientdet(model_name, pretrained=False, num_classes=90, config=None):
+    if config is None:
+        config = default_config
+        config.update(dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',
+                                "regressor_classifier_num_repeat", "anchor_base_scale"), config_dict[model_name])))
     if pretrained:
-        pretrained_backbone = False
-
-    strict = kwargs.pop("strict", True)
-    kwargs['pretrained_backbone'] = pretrained_backbone
-
-    config = dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',
-                       "regressor_classifier_num_repeat", "anchor_base_scale"), config_dict[model_name]))
-    for key, value in config.items():
-        kwargs.setdefault(key, value)
-
-    # generate backbone_kwargs
-    backbone_kwargs = dict()
-    for key in list(kwargs.keys()):
-        if key in ("backbone_name", "pretrained_backbone", "fpn_channels", "fpn_num_repeat", "image_size"):
-            backbone_kwargs[key] = kwargs.pop(key)
-    backbone_kwargs['fpn_norm_layer'] = kwargs['norm_layer'] = norm_layer
+        config['pretrained_backbone'] = False
     # create modules
-    model = EfficientDet(backbone_kwargs, num_classes, **kwargs)
+    model = EfficientDet(num_classes, config)
     if pretrained:
-        state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
-        model.load_state_dict(state_dict, strict)
+        state_dict = load_state_dict_from_url(model_urls[model_name])
+        model.load_state_dict(state_dict)
 
     return model
 
 
-def efficientdet_d0(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d0", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d0(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d0", pretrained, num_classes, config)
 
 
-def efficientdet_d1(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d1", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d1(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d1", pretrained, num_classes, config)
 
 
-def efficientdet_d2(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d2", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d2(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d2", pretrained, num_classes, config)
 
 
-def efficientdet_d3(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d3", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d3(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d3", pretrained, num_classes, config)
 
 
-def efficientdet_d4(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d4", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d4(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d4", pretrained, num_classes, config)
 
 
-def efficientdet_d5(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d5", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d5(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d5", pretrained, num_classes, config)
 
 
-def efficientdet_d6(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d6", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d6(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d6", pretrained, num_classes, config)
 
 
-def efficientdet_d7(pretrained=False, progress=True, num_classes=90, pretrained_backbone=True,
-                    norm_layer=None, **kwargs):
-    return _efficientdet("efficientdet_d7", pretrained, progress, num_classes, pretrained_backbone,
-                         norm_layer, **kwargs)
+def efficientdet_d7(pretrained=False, num_classes=90, config=None):
+    return _efficientdet("efficientdet_d7", pretrained, num_classes, config)
