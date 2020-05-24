@@ -86,7 +86,7 @@ class EfficientDet(nn.Module):
             loss = self.loss_fn(classifications, regressions, anchors, targets)
             return loss
         else:
-            score_thresh = score_thresh or 0.5
+            score_thresh = score_thresh or 0.2
             nms_thresh = nms_thresh or 0.5
             result = self.postprocess(image_list, classifications, regressions, anchors, score_thresh, nms_thresh)
             return result

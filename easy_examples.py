@@ -6,7 +6,7 @@ from utils.display import pil_to_cv
 import torch
 from PIL import Image
 import torchvision.transforms.transforms as trans
-from models.utils import FrozenBatchNorm2d
+
 
 if torch.cuda.is_available():
     device = torch.device('cuda')

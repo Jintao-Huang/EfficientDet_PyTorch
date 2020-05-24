@@ -3,7 +3,7 @@
 
 from .efficientnet import _efficientnet
 import torch.nn as nn
-from .utils import IntermediateLayerGetter, FrozenBatchNorm2d
+from .utils import IntermediateLayerGetter
 from .bifpn import BiFPN
 from collections import OrderedDict
 
