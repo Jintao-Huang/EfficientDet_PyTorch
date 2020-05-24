@@ -294,7 +294,7 @@ class PostProcess(nn.Module):
             image_size = image_sizes[i]
             image_size_ori = image_sizes_ori[i]
             classification, regression = classifications[i], regressions[i]
-            scores, labels = torch.max(classification, dim=-1)
+            scores, labels = torch.max(classification, dim=-1)  # 一个anchor只能对应一个分类
             positive_idx = torch.nonzero(scores >= score_thresh, as_tuple=True)
             labels, scores = labels[positive_idx], scores[positive_idx]
             boxes = decode_boxes(regression[positive_idx], anchors[positive_idx])
