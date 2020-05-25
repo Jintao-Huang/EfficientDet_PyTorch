@@ -8,15 +8,20 @@
 2. 代码参考(reference code):  
 [https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch](https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch)
 
-3. 预训练模型来自(The pre-training model comes from):  
+3. EfficientNet 主干网代码来源(Backbone code source):  
+[https://github.com/Jintao-Huang/EfficientNet_PyTorch](https://github.com/Jintao-Huang/EfficientNet_PyTorch)  
+
+4. 预训练模型来自(The pre-training model comes from):  
 [https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch](https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch)   
 因为修改了模型，所以我把预训练模型的state_dict进行了重组，并进行发布  
 (Because I changed the model, I reorganized the state_dict for the pretraining model and release it)  
 
 
 权重见 release. 或在百度云中下载:  
-链接：[https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA](https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA)  
+链接：[https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA](https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA)   
 提取码：2kq9  
+
+
 
 ## 使用方式(How to use)
 
