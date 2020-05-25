@@ -30,5 +30,5 @@ with torch.no_grad():
     target = model([image], image_size=max(image.shape), score_thresh=score_thresh, nms_thresh=nms_thresh)[0]
 
 # draw
-image = draw_target_in_image(image_o, target)
-imwrite(image, image_out_path)
+draw_target_in_image(image_o, target)
+imwrite(image_o, image_out_path)

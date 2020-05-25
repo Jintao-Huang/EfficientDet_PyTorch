@@ -2,7 +2,7 @@
 # Time: 2020-5-22
 
 from models.efficientdet import efficientdet_d0
-from utils.display import draw_target_in_image, cv_to_pil
+from utils.display import draw_target_in_image, cv_to_pil, resize_max
 import torch
 import torchvision.transforms.transforms as trans
 import cv2 as cv
@@ -44,8 +44,12 @@ for i in range(frame_num):
                        score_thresh=score_thresh, nms_thresh=nms_thresh)[0]
 
     print("\r>> %d / %d. 处理时间: %f" % (i + 1, frame_num, time.time() - start), end="", flush=True)
-    new_image = draw_target_in_image(image_o, target)
-    out.write(new_image)
+    draw_target_in_image(image_o, target)
+    image_show = resize_max(image_o, 720, 1080)
+    cv.imshow("video", image_show)
+    if cv.waitKey(1) in (ord('q'), ord('Q')):
+        exit(0)
+    out.write(image_o)
 print()
 cap.release()
 out.release()

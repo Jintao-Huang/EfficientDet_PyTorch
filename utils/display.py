@@ -15,7 +15,8 @@ def imwrite(image, filename):
 
 
 def imread(filename):
-    """cv无法读取中文字符 (CV cannot read Chinese characters). 此项目中不会用到此函数，写上去只是为了对称美"""
+    """cv无法读取中文字符 (CV cannot read Chinese characters).
+    此项目中不会用到此函数，写上去只是为了对称美"""
     arr = np.fromfile(filename, dtype=np.uint8)
     return cv.imdecode(arr, -1)
 
@@ -34,6 +35,7 @@ def draw_box(image, box, color):
 
 def draw_text(image, box, text, rect_color):
     """在图像的方框上方绘制文字 (Draw text above the box of the image)
+
     :param image: shape(H, W, C). BGR
     :param box: len(4), (ltrb)
     :param text: str
@@ -80,14 +82,14 @@ def cv_to_pil(arr):
     return Image.fromarray(arr)
 
 
-def draw_target_in_image(image_o, target, get_color=None, labels_map=None):
-    """画框在image_o上 (draw boxes and text in image)
+def draw_target_in_image(image, target, get_color=None, labels_map=None):
+    """画框在image上 (draw boxes and text in image)
 
-    :param image_o: ndarray[H, W, C]. BGR. const.
+    :param image: ndarray[H, W, C]. BGR.
     :param target: dict("boxes", "labels", "). (ltrb)  不变
     :param get_color: function(label[int]) -> tuple(B, G, R)  # [0, 256).
     :param labels_map: dict[int: str]. 将int 映射成 类别. 默认: coco_labels_map
-    :return: image: ndarray[H, W, C]. BGR.
+    :return: None
     """
     global colors
     global coco_labels_map
@@ -97,7 +99,6 @@ def draw_target_in_image(image_o, target, get_color=None, labels_map=None):
 
     get_color = get_color or default_get_color
     labels_map = labels_map or coco_labels_map
-    image_o = image_o.copy()
     boxes = target['boxes'].round().int().cpu().numpy()
     labels = target['labels'].cpu().numpy()
 
@@ -109,13 +110,34 @@ def draw_target_in_image(image_o, target, get_color=None, labels_map=None):
     # draw
     for box, label in zip(boxes, labels):
         color = get_color(label)
-        draw_box(image_o, box, color=color)  # 画方框
+        draw_box(image, box, color=color)  # 画方框
     for box, label, score in zip(boxes, labels, scores):  # 防止框把字盖住
         color = get_color(label)
         label_name = labels_map[label]
         text = "%s %.2f" % (label_name, score)
-        draw_text(image_o, box, text, color)  # 写字
-    return image_o
+        draw_text(image, box, text, color)  # 写字
+
+
+def resize_max(image, max_height=None, max_width=None):
+    """将图像resize成最大不超过max_height, max_width的图像
+
+    :param image: shape(H, W, C). BGR. const
+    :param max_width: int
+    :param max_height: int
+    :return: shape(H, W, C). BGR"""
+
+    # 1. 输入
+    height, width = image.shape[:2]
+    max_width = max_width or width
+    max_height = max_height or height
+    # 2. 算法
+    out_w = max_width
+    out_h = height / width * max_width
+    if out_h > max_height:
+        out_h = max_height
+        out_w = width / height * max_height
+    image = cv.resize(image, (int(out_w), int(out_h)))
+    return image
 
 
 coco_labels_map = {
