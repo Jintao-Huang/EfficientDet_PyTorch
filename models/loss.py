@@ -14,6 +14,7 @@ def weighted_binary_focal_loss(y_pred, y_true, alpha=0.25, gamma=2, with_logits=
     :param alpha: 负样本与正样本的权重. The weight of the negative sample and the positive sample
         = alpha * positive + (1 - alpha) * negative
     :param with_logits: y_pred是否未经过sigmoid"""
+
     if reduction == "mean":
         func = torch.mean
     elif reduction == "sum":
@@ -24,6 +25,7 @@ def weighted_binary_focal_loss(y_pred, y_true, alpha=0.25, gamma=2, with_logits=
         y_pred = torch.sigmoid(y_pred)
     y_pred = torch.clamp(y_pred, 1e-6, 1 - 1e-6)
     # 前式与后式关于0.5对称(The former and the latter are symmetric about 0.5)
+    # y_true 为-1. 即: 既不是正样本、也不是负样本。
     return func((alpha * y_true * -torch.log(y_pred) * (1 - y_pred) ** gamma +
                  (1 - alpha) * (1 - y_true) * -torch.log(1 - y_pred) * y_pred ** gamma) * (y_true >= 0).float())
 
@@ -91,7 +93,7 @@ class FocalLoss(nn.Module):
             if boxes.shape[0] == 0:
                 reg_loss_total.append(torch.tensor(0.).to(device))
                 continue
-            anchors_pos = anchors[positive_idxs]
+            anchors_pos = anchors[positive_idxs]  # anchors_positive
             reg_true = encode_boxes(boxes, anchors_pos)
             regression = regression[positive_idxs]
             reg_loss_total.append(smooth_l1_loss(regression, reg_true, divide_line=self.divide_line))

@@ -11,21 +11,21 @@ from .default_config import default_config, config_dict
 
 model_urls = {
     'efficientdet_d0':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d0.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d0-5915643d.pth',
     'efficientdet_d1':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d1.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d1-df68afbd.pth',
     'efficientdet_d2':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d2.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d2-44aa9fcb.pth',
     'efficientdet_d3':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d3.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d3-ce17df0f.pth',
     'efficientdet_d4':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d4.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d4-15d265ef.pth',
     'efficientdet_d5':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d5.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d5-e14bad8e.pth',
     'efficientdet_d6':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d6.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d6-a8376b8a.pth',
     'efficientdet_d7':
-        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet-d7.pth',
+        'https://github.com/Jintao-Huang/EfficientDet_PyTorch/releases/download/1.0/efficientdet_d7-feead963.pth',
 }
 
 
