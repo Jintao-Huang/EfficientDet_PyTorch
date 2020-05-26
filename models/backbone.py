@@ -20,7 +20,7 @@ efficientnet_out_channels = {
 }
 
 
-class EfficientNetBackBoneWithBiFPN(nn.Sequential):
+class EfficientNetWithBiFPN(nn.Sequential):
     def __init__(self, config):
 
         backbone_name = config['backbone_name']
@@ -44,7 +44,7 @@ class EfficientNetBackBoneWithBiFPN(nn.Sequential):
 
         return_layers = {"layer3": "P3", "layer5": "P4", "layer7": "P5"}  # "layer2": "P2",
         in_channels_list = efficientnet_out_channels[backbone_name]  # bifpn
-        super(EfficientNetBackBoneWithBiFPN, self).__init__(OrderedDict({
+        super(EfficientNetWithBiFPN, self).__init__(OrderedDict({
             "body": IntermediateLayerGetter(backbone, return_layers),
             "bifpn": BiFPN(fpn_num_repeat, in_channels_list, fpn_channels,
                            attention=True if "b6" not in backbone_name else False, norm_layer=fpn_norm_layer)

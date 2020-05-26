@@ -2,7 +2,7 @@
 # Time: 2020-5-19
 import torch.nn as nn
 import torch
-from .backbone import EfficientNetBackBoneWithBiFPN
+from .backbone import EfficientNetWithBiFPN
 from .anchor import AnchorGenerator
 from .classifier_regressor import Classifier, Regressor
 from .loss import FocalLoss
@@ -47,7 +47,7 @@ class EfficientDet(nn.Module):
         anchor_aspect_ratios = anchor_aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))  # H, W
         num_anchor = len(anchor_scales) * len(anchor_aspect_ratios)
         self.preprocess = PreProcess(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
-        self.backbone = EfficientNetBackBoneWithBiFPN(config)
+        self.backbone = EfficientNetWithBiFPN(config)
         self.classifier = Classifier(fpn_channels, num_anchor, num_classes, regressor_classifier_num_repeat,
                                      1e-2, 1e-3, other_norm_layer)
         self.regressor = Regressor(fpn_channels, num_anchor, regressor_classifier_num_repeat,
