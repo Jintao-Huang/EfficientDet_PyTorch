@@ -50,3 +50,9 @@ python3 easy_examples.py
 ![原图片](./images/1.png)
 
 ![检测图片](./images/1_d0.png)
+
+
+## 运行环境(environment)
+
+torch 1.2.0  
+torchvision 0.4.0  
