@@ -43,14 +43,14 @@ class EfficientDet(nn.Module):
         other_norm_layer = config['other_norm_layer']
 
         # (2^(1/3)) ^ (0|1|2)
-        num_anchor = len(anchor_scales) * len(anchor_aspect_ratios)
+        num_anchors = len(anchor_scales) * len(anchor_aspect_ratios)
         self.preprocess = PreProcess(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
         self.backbone = EfficientNetWithBiFPN(config)
-        self.classifier = Classifier(fpn_channels, num_anchor, num_classes, regressor_classifier_num_repeat,
+        self.classifier = Classifier(fpn_channels, num_anchors, num_classes, regressor_classifier_num_repeat,
                                      1e-2, 1e-3, other_norm_layer)
-        self.regressor = Regressor(fpn_channels, num_anchor, regressor_classifier_num_repeat,
+        self.regressor = Regressor(fpn_channels, num_anchors, regressor_classifier_num_repeat,
                                    1e-2, 1e-3, other_norm_layer)
-        self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, [3, 4, 5, 6, 7])
+        self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, (3, 4, 5, 6, 7))
         self.loss_fn = FocalLoss(alpha=0.25, gamma=2, divide_line=1 / 9)
         self.postprocess = PostProcess()
 
@@ -66,7 +66,7 @@ class EfficientDet(nn.Module):
         """
         assert isinstance(image_list[0], torch.Tensor)
         image_size = image_size or self.image_size
-        # notice: anchor 32 - 812.7. Please adjust the resolution according to the specific situation
+        # Notice: anchor_size: 32 - 812.7. Please adjust the resolution according to the specific situation
         image_size = min(1920, image_size // 128 * 128)  # 需要被128整除
         image_list, targets = self.preprocess(image_list, targets, image_size)
         x = image_list.tensors

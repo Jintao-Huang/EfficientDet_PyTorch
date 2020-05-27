@@ -100,4 +100,4 @@ class FocalLoss(nn.Module):
 
         class_loss = sum(class_loss_total) / len(class_loss_total)
         reg_loss = sum(reg_loss_total) / len(reg_loss_total)
-        return {"class_loss": class_loss, "reg_loss ": reg_loss}
+        return {"class_loss": class_loss, "reg_loss": reg_loss}

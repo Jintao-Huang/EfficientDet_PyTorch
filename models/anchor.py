@@ -32,7 +32,7 @@ class AnchorGenerator(nn.Module):
         """
         image_size, dtype, device = x.shape[3], x.dtype, x.device
         if self.image_size == image_size:  # Anchors has been generated
-            return self.anchors.to(device, dtype, copy=False)
+            return self.anchors.to(device, dtype, copy=False)  # default: False
         else:
             self.image_size = image_size
 
