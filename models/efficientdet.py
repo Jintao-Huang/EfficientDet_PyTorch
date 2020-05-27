@@ -36,15 +36,13 @@ class EfficientDet(nn.Module):
 
         self.image_size = config['image_size']
         fpn_channels = config['fpn_channels']
-        anchor_scales = config['anchor_scales']
-        anchor_aspect_ratios = config['anchor_aspect_ratios']
-        anchor_base_scale = config['anchor_base_scale']
+        anchor_scales = config['anchor_scales']  # scales on a single feature
+        anchor_aspect_ratios = config['anchor_aspect_ratios']  # H, W
+        anchor_base_scale = config['anchor_base_scale']  # anchor_base_scale(anchor_size / stride)(基准尺度)
         regressor_classifier_num_repeat = config['regressor_classifier_num_repeat']
         other_norm_layer = config['other_norm_layer']
 
         # (2^(1/3)) ^ (0|1|2)
-        anchor_scales = anchor_scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))  # scale on a single feature
-        anchor_aspect_ratios = anchor_aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))  # H, W
         num_anchor = len(anchor_scales) * len(anchor_aspect_ratios)
         self.preprocess = PreProcess(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
         self.backbone = EfficientNetWithBiFPN(config)

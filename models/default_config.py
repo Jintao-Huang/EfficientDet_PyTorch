@@ -10,8 +10,8 @@ default_config = {
     "backbone_norm_layer": FrozenBatchNorm2d,
     "backbone_freeze": ("conv_first", "layer1"),  # "layer2"
     # anchor:
-    "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),
-    "anchor_aspect_ratios": ((1., 1.), (0.7, 1.4), (1.4, 0.7)),
+    "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
+    "anchor_aspect_ratios": ((1., 1.), (0.7, 1.4), (1.4, 0.7)),  # H, W
     # other:
     "other_norm_layer": nn.BatchNorm2d,
 }
