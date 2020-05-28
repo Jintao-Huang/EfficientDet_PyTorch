@@ -64,7 +64,7 @@ class EfficientDet(nn.Module):
         :return: train模式: loss: Dict
                 eval模式: result: Dict
         """
-        assert isinstance(image_list[0], torch.Tensor)
+        assert isinstance(image_list, list) and isinstance(image_list[0], torch.Tensor)
         image_size = image_size or self.image_size
         # Notice: anchor_size: 32 - 812.7. Please adjust the resolution according to the specific situation
         image_size = min(1920, image_size // 128 * 128)  # 需要被128整除

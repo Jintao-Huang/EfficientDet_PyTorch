@@ -28,7 +28,7 @@ class AnchorGenerator(nn.Module):
         """
 
         :param x: (images)Tensor[N, 3, H, W]. need: {.shape, .device, .dtype}
-        :return: anchors[X, 4]  # X -> F*H*W*A. (left, top, right, bottom)
+        :return: anchors[X(F*H*W*A), 4]. (left, top, right, bottom)
         """
         image_size, dtype, device = x.shape[3], x.dtype, x.device
         if self.image_size == image_size:  # Anchors has been generated

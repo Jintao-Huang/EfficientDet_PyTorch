@@ -13,7 +13,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 
-# read images(假定)
+# read images(假定assumption)
 image_fname = "images/1.png"
 with Image.open(image_fname) as image:
     image_o = pil_to_cv(image)
@@ -21,12 +21,12 @@ with Image.open(image_fname) as image:
 del image
 image_2 = torch.rand(3, 600, 800).to(device)  # 图片2
 
-# target(假定)
+# target(假定assumption)
 targets = [{
     "labels": torch.tensor([0, 1]).to(device),
     "boxes": torch.tensor([[0., 10., 200., 200.], [100., 20., 500., 100.]]).to(device)
 }, {
-    "labels": torch.tensor([]).to(device).reshape((0,)),
+    "labels": torch.tensor([]).to(device).reshape((0,)),  # 支持空标签图片(Support empty label images)
     "boxes": torch.tensor([]).to(device).reshape((0, 4))
 }]
 
