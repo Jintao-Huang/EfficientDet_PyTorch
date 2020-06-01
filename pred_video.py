@@ -32,7 +32,6 @@ print("视频帧率: %s" % fps)
 model = efficientdet_d0(True).to(device)
 model.eval()
 for i in range(frame_num):
-    # 一帧一帧的捕获  跳着读
     ret, image_o = cap.read()  # BGR
     if ret is False:
         break  # 未读到

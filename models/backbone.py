@@ -47,5 +47,6 @@ class EfficientNetWithBiFPN(nn.Sequential):
         super(EfficientNetWithBiFPN, self).__init__(OrderedDict({
             "body": IntermediateLayerGetter(backbone, return_layers),
             "bifpn": BiFPN(fpn_num_repeat, in_channels_list, fpn_channels,
-                           attention=True if "b6" not in backbone_name else False, norm_layer=fpn_norm_layer)
+                           attention=True if "b6" not in backbone_name else False,  # d6, d7 use b6
+                           norm_layer=fpn_norm_layer)
         }))
