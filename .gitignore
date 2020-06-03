@@ -5,3 +5,6 @@ weights/
 official_implement/
 video/
 trash/
+datasets/
+make_dataset.py
+train.py

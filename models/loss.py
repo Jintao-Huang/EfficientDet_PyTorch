@@ -80,14 +80,15 @@ class FocalLoss(nn.Module):
                 continue
             # ---------------------------------------- class_loss
             iou, matched = box_iou(anchors, boxes_ori).max(dim=1)  # 每个anchors只能对应一个boxes
-            positive_idxs = (iou >= 0.5)  # 正标签
-            # 既不是负样本，也不是正样本 -> -1
-            labels = torch.full_like(classification, -1, device=device)
-            labels[positive_idxs, labels_ori[matched][positive_idxs]] = 1  # 正样本
-            labels[iou < 0.4] = 0  # 负样本
+            matched_labels = labels_ori[matched]
+            labels = torch.zeros_like(classification, device=device)
+            positive_idxs = torch.nonzero(iou >= 0.5)  # 正标签
+            ignore_idxs = torch.nonzero((iou >= 0.4) & (iou < 0.5))  # 既不是负样本，也不是正样本 -> -1(忽略)
+            labels[positive_idxs, matched_labels[positive_idxs]] = 1
+            labels[ignore_idxs, matched_labels[ignore_idxs]] = -1  # 忽略样本
             class_loss_total.append(weighted_binary_focal_loss(
                 classification, labels, self.alpha, self.gamma, False, 'sum') /
-                                    max(torch.nonzero(positive_idxs).shape[0], 1))
+                                    max(positive_idxs.shape[0], 1))
             # ---------------------------------------- reg_loss
             boxes = boxes_ori[matched][positive_idxs]
             if boxes.shape[0] == 0:
