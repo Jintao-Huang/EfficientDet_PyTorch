@@ -2,11 +2,12 @@
 # Time: 2020-5-24
 
 import torch.nn as nn
+from .utils import FrozenBatchNorm2d
 
 default_config = {
     # backbone
     "pretrained_backbone": True,
-    "backbone_norm_layer": nn.BatchNorm2d,
+    "backbone_norm_layer": FrozenBatchNorm2d,
     "backbone_freeze": ("conv_first", "layer1"),  # "layer2"
     # anchor:
     "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
