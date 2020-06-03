@@ -2,7 +2,6 @@ easy_read/
 .idea/
 __pycache__/
 weights/
-official_implement/
 video/
 trash/
 datasets/
