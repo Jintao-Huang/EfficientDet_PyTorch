@@ -261,7 +261,7 @@ class PreProcess(nn.Module):
 
 def clip_boxes_to_image(boxes, size):
     """copy from torchvision.ops.boxes
-    
+
     Clip boxes so that they lie inside an image of size `size`.
 
     Arguments:
