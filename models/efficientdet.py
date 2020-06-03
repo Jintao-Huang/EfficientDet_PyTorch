@@ -41,6 +41,8 @@ class EfficientDet(nn.Module):
         anchor_base_scale = config['anchor_base_scale']  # anchor_base_scale(anchor_size / stride)(基准尺度)
         regressor_classifier_num_repeat = config['regressor_classifier_num_repeat']
         other_norm_layer = config['other_norm_layer']
+        alpha = config['alpha']
+        gamma = config['gamma']
 
         # (2^(1/3)) ^ (0|1|2)
         num_anchors = len(anchor_scales) * len(anchor_aspect_ratios)
@@ -51,7 +53,7 @@ class EfficientDet(nn.Module):
         self.regressor = Regressor(fpn_channels, num_anchors, regressor_classifier_num_repeat,
                                    1e-2, 1e-3, other_norm_layer)
         self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, (3, 4, 5, 6, 7))
-        self.loss_fn = FocalLoss(alpha=0.25, gamma=2, divide_line=1 / 9)
+        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, divide_line=1 / 9)
         self.postprocess = PostProcess()
 
     def forward(self, image_list, targets=None, image_size=None, score_thresh=None, nms_thresh=None):

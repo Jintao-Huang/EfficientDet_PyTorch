@@ -14,6 +14,8 @@ default_config = {
     "anchor_aspect_ratios": ((1., 1.), (0.7, 1.4), (1.4, 0.7)),  # H, W
     # other:
     "other_norm_layer": nn.BatchNorm2d,
+    "alpha": 0.25,
+    "gamma": 2
 }
 
 config_dict = {
