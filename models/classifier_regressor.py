@@ -22,7 +22,7 @@ class Classifier(nn.Module):
         conv_list = []
         bn_list = []
         for _ in range(num_repeat):
-            conv_list.append(DepthSeparableConv2d(in_channels, in_channels, 3, 1))
+            conv_list.append(DepthSeparableConv2d(in_channels, in_channels, 3, 1, False))
 
         for _ in range(5):  # 5个features
             for _ in range(num_repeat):
@@ -31,7 +31,7 @@ class Classifier(nn.Module):
         self.conv_list = nn.ModuleList(conv_list)
         self.bn_list = nn.ModuleList(bn_list)  # 5 * num_repeat
         out_channels = num_anchors * num_classes
-        self.head = DepthSeparableConv2d(in_channels, out_channels, 3, 1)
+        self.head = DepthSeparableConv2d(in_channels, out_channels, 3, 1, True)
         self.swish = Swish()
 
     def forward(self, features):
@@ -70,7 +70,7 @@ class Regressor(nn.Module):
         conv_list = []
         bn_list = []
         for _ in range(num_repeat):
-            conv_list.append(DepthSeparableConv2d(in_channels, in_channels, 3, 1))
+            conv_list.append(DepthSeparableConv2d(in_channels, in_channels, 3, 1, False))
 
         for _ in range(5):  # 5个features
             for _ in range(num_repeat):
@@ -79,7 +79,7 @@ class Regressor(nn.Module):
         self.conv_list = nn.ModuleList(conv_list)
         self.bn_list = nn.ModuleList(bn_list)  # 5 * num_repeat
         out_channels = num_anchors * 4
-        self.head = DepthSeparableConv2d(in_channels, out_channels, 3, 1)
+        self.head = DepthSeparableConv2d(in_channels, out_channels, 3, 1, True)
         self.swish = Swish()
 
     def forward(self, features):

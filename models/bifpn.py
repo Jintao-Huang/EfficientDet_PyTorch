@@ -59,9 +59,9 @@ class MaxPool2dSamePadding(nn.MaxPool2d):
 class DepthSeparableConv2d(nn.Sequential):
     """depthwise separable convolution"""
 
-    def __init__(self, in_channels, out_channels, kernel_size, stride):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, bias):
         depthwise_conv = Conv2dSamePadding(in_channels, in_channels, kernel_size, stride, in_channels, False)
-        pointwise_conv = Conv2dSamePadding(in_channels, out_channels, 1, 1, 1, True)  # 可改为False
+        pointwise_conv = Conv2dSamePadding(in_channels, out_channels, 1, 1, 1, bias)  # 可改为False
         super(DepthSeparableConv2d, self).__init__(
             OrderedDict({
                 "depthwise_conv": depthwise_conv,
@@ -115,11 +115,11 @@ class BiFPNBlock(nn.Module):
         downsample_block = []  # "P3_2_to_P4_2", "P4_2_to_P5_2", "P5_2_to_P6_2", "P6_2_to_P7_2"
         for _ in range(4):
             conv_block1.append(nn.Sequential(
-                DepthSeparableConv2d(fpn_channels, fpn_channels, 3, 1),
+                DepthSeparableConv2d(fpn_channels, fpn_channels, 3, 1, False),
                 norm_layer(fpn_channels, bn_eps, bn_momentum),
             ))
             conv_block2.append(nn.Sequential(
-                DepthSeparableConv2d(fpn_channels, fpn_channels, 3, 1),
+                DepthSeparableConv2d(fpn_channels, fpn_channels, 3, 1, False),
                 norm_layer(fpn_channels, bn_eps, bn_momentum),
             ), )
             upsample_block.append(nn.UpsamplingNearest2d(scale_factor=2))
