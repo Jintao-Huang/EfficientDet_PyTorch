@@ -81,30 +81,30 @@ class BiFPNBlock(nn.Module):
             # generate P6 and P7
             self.in_blocks = nn.ModuleDict(OrderedDict({
                 "to_P3_0": nn.Sequential(  # P3
-                    Conv2dSamePadding(in_channels_list[0], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[0], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                 ),
                 "to_P4_0": nn.Sequential(  # P4
-                    Conv2dSamePadding(in_channels_list[1], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[1], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                 ),
                 "to_P5_0": nn.Sequential(  # P5
-                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                 ),
                 "to_P6_0": nn.Sequential(
-                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                     MaxPool2dSamePadding(3, 2)
                 ),
                 "to_P7_0": MaxPool2dSamePadding(3, 2),
                 # P4, P5的第二条出线 (直连). P4 and P5 has two outputs
                 "to_P4_02": nn.Sequential(  # P4
-                    Conv2dSamePadding(in_channels_list[1], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[1], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                 ),
                 "to_P5_02": nn.Sequential(  # P5
-                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, True),
+                    Conv2dSamePadding(in_channels_list[2], fpn_channels, 1, 1, 1, False),
                     norm_layer(fpn_channels, bn_eps, bn_momentum),
                 ),
                 # P6_2 使用 P6的输出(P6_2 uses the output of P6)

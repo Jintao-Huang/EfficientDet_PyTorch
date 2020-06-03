@@ -42,6 +42,15 @@ def smooth_l1_loss(y_pred, y_true, divide_line=1.):
     return torch.mean(torch.where(diff < divide_line, 0.5 / divide_line * diff ** 2, diff - 0.5 * divide_line))
 
 
+def iou_loss(iou):
+    """Loss-iou
+
+    :param iou: shape(N,). anchors-ground-truth box(max)
+    :return:
+    """
+    return torch.mean(1 - iou)  # 一个anchors只能对应一个gt box
+
+
 class FocalLoss(nn.Module):
     def __init__(self, alpha=0.25, gamma=2, divide_line=1 / 9):
         """
@@ -90,14 +99,15 @@ class FocalLoss(nn.Module):
                 classification, labels, self.alpha, self.gamma, False, 'sum') /
                                     max(positive_idxs.shape[0], 1))
             # ---------------------------------------- reg_loss
-            boxes = boxes_ori[matched][positive_idxs]
-            if boxes.shape[0] == 0:
-                reg_loss_total.append(torch.tensor(0.).to(device))
-                continue
-            anchors_pos = anchors[positive_idxs]  # anchors_positive
-            reg_true = encode_boxes(boxes, anchors_pos)
-            regression = regression[positive_idxs]
-            reg_loss_total.append(smooth_l1_loss(regression, reg_true, self.divide_line))
+            reg_loss_total.append(iou_loss(iou))
+            # boxes = boxes_ori[matched][positive_idxs]
+            # if boxes.shape[0] == 0:
+            #     reg_loss_total.append(torch.tensor(0.).to(device))
+            #     continue
+            # anchors_pos = anchors[positive_idxs]  # anchors_positive
+            # reg_true = encode_boxes(boxes, anchors_pos)
+            # regression = regression[positive_idxs]
+            # reg_loss_total.append(smooth_l1_loss(regression, reg_true, self.divide_line))
 
         class_loss = sum(class_loss_total) / len(class_loss_total)
         reg_loss = sum(reg_loss_total) / len(reg_loss_total)
