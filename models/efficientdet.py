@@ -77,9 +77,6 @@ class EfficientDet(nn.Module):
         regressions = self.regressor(features)
         del features
         anchors = self.anchor_gen(x)
-        # 预训练模型的顺序 -> 当前模型顺序
-        # y_reg, x_reg, h_reg, w_reg -> x_reg, y_reg, w_reg, h_reg
-        # regressions[..., 0::2], regressions[..., 1::2] = regressions[..., 1::2], regressions[..., 0::2].clone()
         if targets is not None:
             if score_thresh is not None or nms_thresh is not None:
                 print("Warning: no need to transfer score_thresh or nms_thresh")

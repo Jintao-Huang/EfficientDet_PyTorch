@@ -11,7 +11,7 @@ default_config = {
     "backbone_freeze": ("conv_first", "layer1"),  # "layer2"
     # anchor:
     "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
-    "anchor_aspect_ratios": ((1., 1.), (0.7, 1.4), (1.4, 0.7)),  # H, W
+    "anchor_aspect_ratios": (1., 0.5, 2.),  # H, W
     # focal loss
     "alpha": 0.25,
     "gamma": 2,

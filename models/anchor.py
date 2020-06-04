@@ -2,6 +2,7 @@
 # Time: 2020-5-19
 import torch.nn as nn
 import torch
+import math
 
 
 class AnchorGenerator(nn.Module):
@@ -15,8 +16,8 @@ class AnchorGenerator(nn.Module):
         """
         super(AnchorGenerator, self).__init__()
         self.scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
-        aspect_ratios = aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))
-        if not isinstance(aspect_ratios[0][0], (list, tuple)):
+        aspect_ratios = aspect_ratios or (1., 0.5, 2.)
+        if not isinstance(aspect_ratios[0], (list, tuple)):
             self.aspect_ratios = (aspect_ratios,) * len(scales)
         pyramid_levels = pyramid_levels or (3, 4, 5, 6, 7)
         self.strides = [2 ** i for i in pyramid_levels]
@@ -45,8 +46,8 @@ class AnchorGenerator(nn.Module):
                         raise ValueError('input size must be divided by the stride.')
                     base_anchor_size = self.base_scale * stride * scale
                     # anchor_h / anchor_w = aspect_ratio
-                    anchor_h = base_anchor_size * aspect_ratio[0]
-                    anchor_w = base_anchor_size * aspect_ratio[1]
+                    anchor_h = base_anchor_size * math.sqrt(aspect_ratio)
+                    anchor_w = base_anchor_size / math.sqrt(aspect_ratio)
                     shifts_x = torch.arange(stride / 2, image_size, stride, dtype=dtype, device=device)
                     shifts_y = torch.arange(stride / 2, image_size, stride, dtype=dtype, device=device)
                     shift_y, shift_x = torch.meshgrid(shifts_y, shifts_x)
