@@ -90,6 +90,7 @@ class EfficientDet(nn.Module):
 
 
 def _efficientdet(model_name, pretrained=False, num_classes=90, config=None):
+    assert not pretrained, "The pre-training model does not exist. Use `master` if you want to use pre-training model"
     if config is None:
         config = default_config
         config.update(dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',

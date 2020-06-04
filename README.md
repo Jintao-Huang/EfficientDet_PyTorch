@@ -50,7 +50,7 @@ python3 pred_video.py
 
 #### 3. 简单的训练案例(Simple training cases)
 ```
-python3 easy_examples.py
+python3 train_example.py
 ```
 
 ## 性能 
