@@ -11,7 +11,7 @@ import os
 
 # -------------------------- 参数
 video_path = "video/1.mp4"
-video_out_path = video_path[:-4] + "_out" + video_path[-4:]
+video_out_path = video_path.rsplit('.', 1)[0] + "_out." + video_path.rsplit('.', 1)[1]  # 懒得命名变量了
 score_thresh = 0.35
 nms_thresh = 0.5
 # --------------------------

@@ -9,7 +9,7 @@ import torchvision.transforms.transforms as trans
 
 # -------------------------------- 参数
 image_path = "images/1.png"
-image_out_path = image_path[:-4] + "_out" + image_path[-4:]
+image_out_path = image_path.rsplit('.', 1)[0] + "_out." + image_path.rsplit('.', 1)[1]  # 懒得命名变量了
 score_thresh = 0.2
 nms_thresh = 0.2
 # --------------------------------
