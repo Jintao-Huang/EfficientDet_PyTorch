@@ -41,9 +41,9 @@ class EfficientNetWithBiFPN(nn.Sequential):
             for freeze_layer in backbone_freeze:
                 if freeze_layer in name:
                     parameter.requires_grad_(False)
-                #     break
-                # else:
-                #     parameter.requires_grad_(True)
+                    break
+            # else:
+            #     parameter.requires_grad_(True)
 
         return_layers = {"layer3": "P3", "layer5": "P4", "layer7": "P5"}  # "layer2": "P2",
         in_channels_list = efficientnet_out_channels[backbone_name]  # bifpn
