@@ -8,7 +8,7 @@ from PIL import Image
 
 def imwrite(image, filename):
     """cv无法读取中文字符 (CV cannot read Chinese characters)"""
-    retval, arr = cv.imencode('.jpg', image)  # retval: 是否保存成功
+    retval, arr = cv.imencode(filename[-4:], image)  # retval: 是否保存成功
     if retval is True:
         arr.tofile(filename)
     return retval
