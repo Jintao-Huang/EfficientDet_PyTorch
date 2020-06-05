@@ -7,3 +7,4 @@ trash/
 datasets/
 make_dataset.py
 train.py
+test.py

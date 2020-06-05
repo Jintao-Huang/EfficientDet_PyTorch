@@ -23,13 +23,12 @@ def weighted_binary_focal_loss(y_pred, y_true, alpha=0.25, gamma=2, with_logits=
         raise ValueError("reduction should in ('mean', 'sum')")
     if with_logits:
         y_pred = torch.sigmoid(y_pred)
-    y_pred_clamp_1 = y_pred - 1e-6  # 防止梯度误截断, 不使用clamp
-    y_pred_clamp_0 = y_pred + 1e-6
+    y_pred = torch.clamp(y_pred, 1e-6, 1 - 1e-6)
 
     # 前式与后式关于0.5对称(The former and the latter are symmetric about 0.5)
     # y_true 为-1. 即: 既不是正样本、也不是负样本。
-    return func((alpha * y_true * -torch.log(y_pred_clamp_0) * (1 - y_pred) ** gamma +
-                 (1 - alpha) * (1 - y_true) * -torch.log(1 - y_pred_clamp_1) * y_pred ** gamma) *
+    return func((alpha * y_true * -torch.log(y_pred) * (1 - y_pred) ** gamma +
+                 (1 - alpha) * (1 - y_true) * -torch.log(1 - y_pred) * y_pred ** gamma) *
                 (y_true >= 0).float())
 
 

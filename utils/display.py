@@ -82,22 +82,19 @@ def cv_to_pil(arr):
     return Image.fromarray(arr)
 
 
-def draw_target_in_image(image, target, get_color=None, labels_map=None):
+def draw_target_in_image(image, target, colors_map=None, labels_map=None):
     """画框在image上 (draw boxes and text in image)
 
     :param image: ndarray[H, W, C]. BGR.
     :param target: dict("boxes", "labels", "). (ltrb)  不变
-    :param get_color: function(label[int]) -> tuple(B, G, R)  # [0, 256).
-    :param labels_map: dict[int: str]. 将int 映射成 类别. 默认: coco_labels_map
+    :param colors_map: dict[int: str]/List -> tuple(B, G, R)  # [0, 256).
+    :param labels_map: dict[int: str]/List. 将int 映射成 类别. 默认: coco_labels_map
     :return: None
     """
     global colors
     global coco_labels_map
 
-    def default_get_color(label):
-        return colors[label]
-
-    get_color = get_color or default_get_color
+    colors_map = colors_map or colors
     labels_map = labels_map or coco_labels_map
     boxes = target['boxes'].round().int().cpu().numpy()
     labels = target['labels'].cpu().numpy()
@@ -109,10 +106,10 @@ def draw_target_in_image(image, target, get_color=None, labels_map=None):
         scores = scores.cpu().numpy()
     # draw
     for box, label in zip(boxes, labels):
-        color = get_color(label)
+        color = colors_map[label]
         draw_box(image, box, color=color)  # 画方框
     for box, label, score in zip(boxes, labels, scores):  # 防止框把字盖住
-        color = get_color(label)
+        color = colors_map[label]
         label_name = labels_map[label]
         text = "%s %.2f" % (label_name, score)
         draw_text(image, box, text, color)  # 写字
