@@ -1,15 +1,20 @@
 # EfficientDet_PyTorch
 
 注意事项(NOTICE):  
-1. 训练请使用SGD优化器(with momentum). 不要使用Adam. 会造成不收敛  
+1. 训练请使用SGD优化器(with momentum). 不要使用Adam. 会造成不收敛.  
+预训练期间学习率不要过大(<=1e-3)，会造成sigmoid分布趋于两端而梯度消失  
 Use SGD optimizer for training(with momentum). Do not use Adam. It will cause a nonconvergence  
+During the pre-training, the learning rate should not be too high(<=1e-3)  
+
 2. 有两个分支，一个是按照论文书写(official)、一个是参考`zylo117`的代码(master)，
 并使用了他的预训练模型书写(万分感谢)，请按实际情况选择   
 There are two branches, one(official) was written according to the paper, 
 the other(master) was written referring to the code of 'Zylo117' and use his pre-training model(thank you very much), 
 please choose according to the actual situation    
+
 3. `train_example.py`的意义是展示模型输入的格式   
 The meaning of `train_example.py` is to show the format of the model input    
+
 4. 自己训练的时候，请使用`EfficientNet`预训练模型、并`Freeze BackboneBN`(推荐使用official)    
 Use 'EfficientNet' pre-training model and 'Freeze BackboneBN' when you train yourself 
 (Official is recommended)   
