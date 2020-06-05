@@ -2,9 +2,9 @@
 
 注意事项(NOTICE):  
 1. 训练请使用SGD优化器(with momentum). 不要使用Adam. 会造成不收敛.  
-预训练期间学习率不要过大(<=1e-3)，会造成sigmoid分布趋于两端而梯度消失  
+预训练期间学习率不要过大     
 Use SGD optimizer for training(with momentum). Do not use Adam. It will cause a nonconvergence  
-During the pre-training, the learning rate should not be too high(<=1e-3)  
+During the pre-training, the learning rate should not be too high   
 
 2. 有两个分支，一个是按照论文书写(official)、一个是参考`zylo117`的代码(master)，
 并使用了他的预训练模型书写(万分感谢)，请按实际情况选择   
