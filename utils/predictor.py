@@ -66,12 +66,6 @@ class Predictor:
         draw_target_in_image(image_o, target)
         return image_o
 
-    def pred_image_and_save(self, image_path, image_out_path, image_size="max", score_thresh=0.5, nms_thresh=0.5):
-
-        with Image.open(image_path) as image:
-            image = self._pred_image(image, image_size, score_thresh, nms_thresh)
-        imwrite(image, image_out_path)
-
     def pred_image_and_show(self, image_path, image_size="max", score_thresh=0.5, nms_thresh=0.5):
         with Image.open(image_path) as image:
             image = self._pred_image(image, image_size, score_thresh, nms_thresh)
@@ -79,9 +73,24 @@ class Predictor:
         cv.imshow("predictor", image_show)
         cv.waitKey(0)
 
-    def pred_video_and_save(self, video_path, video_out_path, image_size="max", score_thresh=0.5, nms_thresh=0.5,
-                            exist_ok=False):
+    def _default_out_path(self, in_path):
+        """
 
+        :param in_path: str
+        :return: return out_path
+        """
+        path_split = in_path.rsplit('.', 1)
+        return path_split[0] + "_out." + path_split[1]
+
+    def pred_image_and_save(self, image_path, image_out_path=None, image_size="max", score_thresh=0.5, nms_thresh=0.5):
+        image_out_path = image_out_path or self._default_out_path(image_path)
+        with Image.open(image_path) as image:
+            image = self._pred_image(image, image_size, score_thresh, nms_thresh)
+        imwrite(image, image_out_path)
+
+    def pred_video_and_save(self, video_path, video_out_path=None, image_size="max", score_thresh=0.5, nms_thresh=0.5,
+                            exist_ok=False):
+        video_out_path = video_out_path or self._default_out_path(video_path)
         if not exist_ok and os.path.exists(video_out_path):
             raise FileExistsError("%s is exists" % video_out_path)
 

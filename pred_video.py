@@ -7,7 +7,6 @@ from utils.predictor import Predictor
 
 # -------------------------- 参数
 video_path = "video/1.mp4"
-video_out_path = video_path.rsplit('.', 1)[0] + "_out." + video_path.rsplit('.', 1)[1]  # 懒得命名变量了
 score_thresh = 0.35
 nms_thresh = 0.5
 # --------------------------
@@ -19,4 +18,4 @@ else:
 
 model = efficientdet_d0(True).to(device)
 predictor = Predictor(model, device)
-predictor.pred_video_and_save(video_path, video_out_path, "max", score_thresh, nms_thresh, True)
+predictor.pred_video_and_save(video_path, None, "max", score_thresh, nms_thresh, False)
