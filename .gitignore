@@ -8,3 +8,4 @@ datasets/
 make_dataset.py
 train.py
 test.py
+fix.txt
