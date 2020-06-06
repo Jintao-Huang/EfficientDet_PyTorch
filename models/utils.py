@@ -188,80 +188,9 @@ class ImageList:
         return ImageList(cast_tensor, self.image_sizes_ori, self.image_sizes)
 
 
-class PreProcess(nn.Module):
-    def __init__(self, mean=None, std=None):
-        super(PreProcess, self).__init__()
-        self.mean = mean or (0.485, 0.456, 0.406)
-        self.std = std or (0.229, 0.224, 0.225)
-        self.trans_func = trans.Normalize(self.mean, self.std)
-
-    def forward(self, image_list, target_list, max_size):
-        """
-
-        :param image_list: List[Tensor[C, H, W]]  const
-        :param target_list: List[Dict("boxes"...)]  const
-        :return: image_size_ori: tuple(H, W), image: (C, H, W)"""
-
-        image_sizes_ori = []
-        image_sizes = []
-        images = []
-        targets = []
-        for i, image in enumerate(image_list):
-            image = self.trans_func(image)
-            image_sizes_ori.append(image.shape[-2:])
-            image, target = self.resize_max(image, target_list[i] if target_list is not None else None,
-                                            max_size, max_size)
-            image_sizes.append(image.shape[-2:])
-            image = self.zero_padding(image)
-            images.append(image)
-            if target_list is not None:
-                targets.append(target)
-
-        return ImageList(torch.stack(images, dim=0), image_sizes_ori, image_sizes), targets if targets else None
-
-    @staticmethod
-    def resize_max(image, target=None, max_width=None, max_height=None):
-        """将图像resize成最大最小不超过max_width, max_height的图像
-
-        :param image: shape(C, H, W). const
-        :param target: dict("boxes"). const
-        :param max_width: int
-        :param max_height: int
-        :return: shape(C, H, W).
-        """
-        # 1. 输入
-        height, width = image.shape[-2:]  # original
-        max_width = max_width or width
-        max_height = max_height or height
-        # 2. 算法
-        out_w = max_width
-        out_h = height / width * max_width
-        if out_h > max_height:
-            out_h = max_height
-            out_w = width / height * max_height
-        out_h, out_w = int(out_h), int(out_w)
-        image = F.interpolate(
-            image[None], (out_h, out_w), mode='bilinear', align_corners=False)[0]
-        if target is not None:
-            target = {
-                "labels": target["labels"],  # 可以clone()
-                "boxes": target["boxes"].clone()
-            }
-            target["boxes"] = target["boxes"] * out_h / height
-        return image, target
-
-    @staticmethod
-    def zero_padding(image, padding_value=0., max_padding=None):
-        max_padding = max_padding or max(image.shape)
-        output = torch.full((image.shape[0], max_padding, max_padding), padding_value,
-                            dtype=image.dtype, device=image.device)
-        output[:, :image.shape[-2], :image.shape[-1]] = image
-        return output
-
-
 def clip_boxes_to_image(boxes, size):
     """copy from torchvision.ops.boxes
-    
+
     Clip boxes so that they lie inside an image of size `size`.
 
     Arguments:
@@ -279,6 +208,84 @@ def clip_boxes_to_image(boxes, size):
     boxes_y = boxes_y.clamp(min=0, max=height - 1)
     clipped_boxes = torch.stack((boxes_x, boxes_y), dim=dim)
     return clipped_boxes.reshape(boxes.shape)
+
+
+class PreProcess(nn.Module):
+    def __init__(self, mean=None, std=None):
+        super(PreProcess, self).__init__()
+        self.mean = mean or (0.485, 0.456, 0.406)
+        self.std = std or (0.229, 0.224, 0.225)
+        self.trans_func = trans.Normalize(self.mean, self.std)
+
+    def forward(self, image_list, target_list, max_size):
+        """
+
+        :param image_list: List[Tensor[C, H, W]]  const. C=3. RGB
+        :param target_list: List[Dict("boxes"...)]  const
+        :return: ImageList{.tensor[N, C, H, W]}, targets: List[Dict]"""
+
+        image_sizes_ori = []
+        image_sizes = []
+        images = []
+        targets = []
+        for i, image in enumerate(image_list):
+            image = self.trans_func(image)
+            image_sizes_ori.append(image.shape[-2:])
+            image, target = self.resize_max(image, target_list[i] if target_list is not None else None,
+                                            max_size, max_size)
+            image_sizes.append(image.shape[-2:])
+            image = self.zero_padding(image)
+            images.append(image)
+            if target_list is not None:
+                targets.append(target)
+
+        return ImageList(torch.stack(images, dim=0), image_sizes_ori, image_sizes), \
+               targets if targets else None
+
+    @staticmethod
+    def resize_max(image, target=None, max_width=None, max_height=None):
+        """将图像resize成最大最小不超过max_width, max_height的图像
+
+        :param image: Tensor(C, H, W). const
+        :param target: dict("boxes"). const
+        :param max_width: int
+        :param max_height: int
+        :return: shape(C, H, W).
+        """
+        # 1. 输入
+        height_ori, width_ori = image.shape[-2:]  # original
+        max_width = max_width or width_ori
+        max_height = max_height or height_ori
+        # 2. 算法
+        width = max_width
+        height = width / width_ori * height_ori
+        if height > max_height:
+            height = max_height
+            width = height / height_ori * width_ori
+        height, width = int(height), int(width)
+        image = F.interpolate(image[None], (height, width), mode='bilinear', align_corners=False)[0]
+        if target is not None:
+            target = {
+                "labels": target["labels"],  # 可以clone()
+                "boxes": target["boxes"].clone()
+            }
+            target["boxes"] = target["boxes"] * height / height_ori
+        return image, target
+
+    @staticmethod
+    def zero_padding(image, padding_value=0., max_padding=None):
+        """
+
+        :param image: Tensor[C, H, W]
+        :param padding_value: float.
+        :param max_padding: int. padding后的最大尺度. 默认max(image.shape)
+        :return: Tensor[C, X, X]."""
+
+        max_padding = max_padding or max(image.shape[-2:])
+        output = torch.full((image.shape[0], max_padding, max_padding), padding_value,
+                            dtype=image.dtype, device=image.device)
+        output[:, :image.shape[-2], :image.shape[-1]] = image
+        return output
 
 
 class PostProcess(nn.Module):
@@ -299,7 +306,7 @@ class PostProcess(nn.Module):
             labels, scores = labels[positive_idx], scores[positive_idx]
             boxes = decode_boxes(regression[positive_idx], anchors[positive_idx])
             boxes = clip_boxes_to_image(boxes, image_size)  # 裁剪超出图片的boxes (Cut out boxes beyond the picture)
-            keep_idxs = batched_nms(boxes, scores, labels, nms_thresh)
+            keep_idxs = batched_nms(boxes, scores, labels, nms_thresh)  # scores 不用预先排序
             scores, labels, boxes = scores[keep_idxs], labels[keep_idxs], boxes[keep_idxs]
             boxes *= image_size_ori[0] / image_size[0]  # boxes回归原图
             targets.append({
