@@ -2,6 +2,8 @@
 
 注意事项(NOTICE):  
 1. 训练请使用SGD优化器(with momentum). 不要使用Adam. 会造成不收敛.   
+推荐学习率: Pre_train(1e-4 -> 1e-3 -> 1e-2 -> 4e-2) -> Train(8e-2) -> Post_Train(4e-2 -> 1e-2 -> 1e-3)    
+推荐weight_decay: 4e-5   
 Use SGD optimizer for training(with momentum). Do not use Adam. It will cause a nonconvergence   
 
 2. 有两个分支，一个是按照论文书写(official)、一个是参考`zylo117`的代码(master)，
