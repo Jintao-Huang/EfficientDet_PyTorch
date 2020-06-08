@@ -8,8 +8,7 @@ default_config = {
     # backbone
     "pretrained_backbone": True,
     "backbone_norm_layer": FrozenBatchNorm2d,
-    # "backbone_freeze": ("conv_first", "layer1"),  # "layer2"
-    "backbone_freeze": ("",),  # 若计算资源不够(batch_size过小)，可将整个backbone freeze
+    "backbone_freeze": ("",),  # freeze backbone all
     # anchor:
     "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
     "anchor_aspect_ratios": (0.5, 1., 2.),  # H, W
@@ -20,7 +19,7 @@ default_config = {
     "other_norm_layer": nn.BatchNorm2d,
 }
 
-# config_dict = {
+# config_dict = {  # 参考 https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch
 #     # resolution[% 128 == 0], backbone, fpn_channels, fpn_num_repeat, regressor_classifier_num_repeat,
 #     # anchor_base_scale(anchor_size / stride)(基准尺度)
 #     'efficientdet_d0': (512, 'efficientnet_b0', 64, 3, 3, 4.),  #
