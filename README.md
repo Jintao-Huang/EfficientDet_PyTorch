@@ -58,6 +58,14 @@ python3 pred_video.py
 python3 train_example.py
 ```
 
+#### 4. 训练
+
+```
+python3 make_dataset.py
+python3 train.py
+```
+
+
 ## 性能 
 如果打不开可在`images/`与`docs/`文件夹中查看  
 

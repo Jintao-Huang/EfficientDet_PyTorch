@@ -23,7 +23,7 @@ class Predictor:
         """
 
         :param image: Tensor[C, H, W]
-        :param image_size:
+        :param image_size: None / int / "max"
         :param score_thresh:
         :param nms_thresh:
         :return: target: Dict
@@ -44,7 +44,7 @@ class Predictor:
         :param image_size: None / int / "max"
         :param score_thresh: float
         :param nms_thresh: float
-        :return: None
+        :return: image: ndarray[H, W, C]
         """
 
         image_o = pil_to_cv(image)
