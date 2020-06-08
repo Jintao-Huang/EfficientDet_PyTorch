@@ -14,11 +14,10 @@ train_pkl_fname = "images_targets_train.pkl"
 train_hflip_pkl_fname = "images_targets_train_hflip.pkl"
 test_pkl_fname = "images_targets_test.pkl"
 category = {
-    "lip": -1,  # ignore
-    "tongue": 0
+    # ...
 }
 labels_map = {
-    0: "tongue"
+    # ...
 }
 # --------------------------------
 xml_processor = XMLProcessor(root_dir, images_folder, annos_folder, pkl_folder, category, labels_map, True)
