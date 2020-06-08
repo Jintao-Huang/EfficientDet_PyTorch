@@ -16,7 +16,7 @@ else:
     device = torch.device('cpu')
 
 # pred
-model = efficientdet_d0(True).to(device)
+model = efficientdet_d0(True)
 predictor = Predictor(model, device)
 predictor.pred_image_and_save(image_path, None, "max", score_thresh, nms_thresh)
 predictor.pred_image_and_show(image_path, "max", score_thresh, nms_thresh)  # test function

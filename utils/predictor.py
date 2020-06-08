@@ -31,7 +31,7 @@ class Predictor:
     """$"""
 
     def __init__(self, model, device):
-        self.model = model
+        self.model = model.to(device)
         self.device = device
         self._pred_video_now = False
 
