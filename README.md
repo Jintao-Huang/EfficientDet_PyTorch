@@ -67,7 +67,7 @@ python3 train_example.py
 
 ![原图片](./images/1.png)
 
-![检测图片](./images/1_d0.png)
+![检测图片](./images/1_d0.jpg)
 
 
 ## 运行环境(environment)
