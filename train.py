@@ -15,7 +15,7 @@ train_pickle_fname = "images_targets_train_hflip.pkl"
 test_pickle_fname = "images_targets_test.pkl"
 
 labels_map = {
-    0: "tongue"
+    # ...
 }
 
 
@@ -44,7 +44,7 @@ def main():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
-    model = efficientdet_d1(False, num_classes=1)
+    model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=1e-4, nesterov=True)
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
