@@ -1,11 +1,10 @@
-easy_read/
 .idea/
 __pycache__/
 weights/
+checkpoints/
 video/
 trash/
 datasets/
-make_dataset.py
-train.py
+runs/
 test.py
 fix.txt

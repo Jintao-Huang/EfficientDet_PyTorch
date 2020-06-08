@@ -2,29 +2,13 @@
 # Time: 2020-6-6
 
 import torch
+from .utils import to
 import torchvision.transforms.transforms as trans
 from PIL import Image
-from .display import pil_to_cv, cv_to_pil, draw_target_in_image, imwrite, resize_max
+from ..display import pil_to_cv, cv_to_pil, draw_target_in_image, imwrite, resize_max
 import os
 import cv2 as cv
 import time
-
-
-def to(images, targets, device):
-    """
-
-    :param images: List[Tensor[C, H, W]]
-    :param targets: List[Dict] / None
-    :param device: str / device
-    :return: images: List[Tensor], targets: List[Dict] / None
-    """
-    for i in range(len(images)):
-        if images is not None:
-            images[i] = images[i].to(device)
-        if targets is not None:
-            targets[i]["boxes"] = targets[i]["boxes"].to(device)
-            targets[i]["labels"] = targets[i]["labels"].to(device)
-    return images, targets
 
 
 class Predictor:
@@ -42,7 +26,7 @@ class Predictor:
         :param image_size:
         :param score_thresh:
         :param nms_thresh:
-        :return: target
+        :return: target: Dict
         """
         if image_size == "max":
             image_size = max(image.shape[-2:])
@@ -50,7 +34,7 @@ class Predictor:
             self.model.eval()
         with torch.no_grad():
             x, _ = to([image], None, self.device)
-            target = self.model(x, None, image_size, score_thresh, nms_thresh)
+            target = self.model(x, None, image_size, score_thresh, nms_thresh)[0]
         return target
 
     def _pred_image(self, image, image_size="max", score_thresh=0.5, nms_thresh=0.5):
@@ -66,7 +50,7 @@ class Predictor:
         image_o = pil_to_cv(image)
         image = trans.ToTensor()(image)
 
-        target = self.pred(image, image_size, score_thresh, nms_thresh)[0]
+        target = self.pred(image, image_size, score_thresh, nms_thresh)
         draw_target_in_image(image_o, target)
         return image_o
 
