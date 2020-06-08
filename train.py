@@ -5,9 +5,9 @@ import torch
 from models.efficientdet import efficientdet_d1
 from utils.detect import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, get_dataset_from_pickle
 
-batch_size = 1
+batch_size = 32
 # --------------------------------
-root_dir = r'C:\Users\29715\Desktop\服务外包\低俗图片\200429tongue'
+root_dir = r'.'
 images_folder = 'JPEGImages'
 pkl_folder = 'pkl'
 
