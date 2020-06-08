@@ -3,7 +3,7 @@
 
 import torch
 from models.efficientdet import efficientdet_d1
-from utils.detect import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, get_dataset_from_pickle
+from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, get_dataset_from_pickle
 
 batch_size = 32
 # --------------------------------

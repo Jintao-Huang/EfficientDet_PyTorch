@@ -2,7 +2,7 @@
 # Time: 2020-5-21
 
 
-from utils.detect import XMLProcessor
+from utils.detection import XMLProcessor
 
 # --------------------------------
 root_dir = r'.'

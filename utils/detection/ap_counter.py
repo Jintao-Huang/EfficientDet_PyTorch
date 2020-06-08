@@ -28,7 +28,7 @@ class APCounter:
     def add(self, pred_list, target_list):
         """
 
-        :param pred_list: List[Dict]. pred_score 已按从大到小排序
+        :param pred_list: List[Dict]. "scores" 已按从大到小排序
         :param target_list: List[Dict]
         :return: None
         """
