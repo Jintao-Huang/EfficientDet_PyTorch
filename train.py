@@ -5,9 +5,9 @@ import torch
 from models.efficientdet import efficientdet_d1
 from utils.detect import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, get_dataset_from_pickle
 
-batch_size = 32
+batch_size = 1
 # --------------------------------
-root_dir = r'.'
+root_dir = r'C:\Users\29715\Desktop\服务外包\低俗图片\200429tongue'
 images_folder = 'JPEGImages'
 pkl_folder = 'pkl'
 
@@ -57,6 +57,7 @@ def main():
     logger = Logger(50, None)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     trainer.train((0, 60))
+    logger.writer.close()
 
 
 if __name__ == "__main__":

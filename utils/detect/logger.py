@@ -6,7 +6,7 @@ import time
 
 class Logger:
     def __init__(self, print_steps, writer=None):
-        self.need_close_writer = writer is None
+        """Notice: 需要显式的关闭writer. `logger.writer.close()`"""
         self.writer = writer or SummaryWriter()
         self.print_steps = print_steps
         self.steps_each_epoch = None
@@ -52,7 +52,3 @@ class Logger:
               (self.epoch, self.steps, self.steps_each_epoch, self.steps / self.steps_each_epoch * 100,
                loss_mean, time_, self.lr), flush=True)
         self.mini_start_time = time.time()
-
-    def __del__(self):
-        if self.need_close_writer:
-            self.writer.close()
