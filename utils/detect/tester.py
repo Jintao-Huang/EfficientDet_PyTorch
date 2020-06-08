@@ -27,7 +27,7 @@ class Tester:
                     break
 
             ap_dict = self.ap_counter.get_ap_dict()
-            self.ap_counter.init_table()
+            self.ap_counter.init_table()  # clear memory
             self.print_mes(i + 1, ap_dict)
         return ap_dict
 

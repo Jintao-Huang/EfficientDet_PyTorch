@@ -8,15 +8,15 @@ import numpy as np
 from torch.backends import cudnn
 
 
-def save_to_pickle(data, filename):
+def save_to_pickle(data, filepath):
     """$"""
-    with open(filename, "wb") as f:
+    with open(filepath, "wb") as f:
         pickle.dump(data, f)
 
 
-def load_from_pickle(filename):
+def load_from_pickle(filepath):
     """$"""
-    with open(filename, "rb") as f:
+    with open(filepath, "rb") as f:
         obj = pickle.load(f)
     return obj
 
@@ -39,21 +39,21 @@ def set_seed(seed=0):
     cudnn.deterministic = True
 
 
-def save_params(model, filename):
-    torch.save(model.state_dict(), filename)
+def save_params(model, filepath):
+    torch.save(model.state_dict(), filepath)
 
 
-def load_params(model, filename, drop_layers=(), prefix="", strict=True):
+def load_params(model, filepath, drop_layers=(), prefix="", strict=True):
     """
 
     :param model: 变
-    :param filename: str
+    :param filepath: str
     :param drop_layers: 对加完前缀后的pth进行剔除.
     :param prefix: 在pth的state_dict加上前缀.
     :param strict: bool
     """
 
-    load_state_dict = torch.load(filename)
+    load_state_dict = torch.load(filepath)
     # 1. 加前缀
     if prefix:
         for key in list(load_state_dict.keys()):
@@ -67,9 +67,9 @@ def load_params(model, filename, drop_layers=(), prefix="", strict=True):
     return model.load_state_dict(load_state_dict, strict)
 
 
-def load_params_by_order(model, filename, strict=True):
+def load_params_by_order(model, filepath, strict=True):
     """The parameter name of the pre-training model is different from the parameter name of the model"""
-    load_state_dict = torch.load(filename)
+    load_state_dict = torch.load(filepath)
     # --------------------- 算法
     load_keys = list(load_state_dict.keys())
     model_keys = list(model.state_dict().keys())
