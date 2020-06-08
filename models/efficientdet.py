@@ -7,7 +7,7 @@ from .anchor import AnchorGenerator
 from .classifier_regressor import Classifier, Regressor
 from .loss import FocalLoss
 from .utils import load_state_dict_from_url, PreProcess, PostProcess
-from .default_config import default_config, config_dict
+from .config import default_config, config_dict
 
 model_urls = {
     'efficientdet_d0':
@@ -92,11 +92,10 @@ class EfficientDet(nn.Module):
             return result
 
 
-def _efficientdet(model_name, pretrained=False, num_classes=90, config=None):
-    if config is None:
-        config = default_config
-        config.update(dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',
-                                "regressor_classifier_num_repeat", "anchor_base_scale"), config_dict[model_name])))
+def _efficientdet(model_name, pretrained=False, num_classes=90):
+    config = default_config
+    config.update(dict(zip(('image_size', 'backbone_name', 'fpn_channels', 'fpn_num_repeat',
+                            "regressor_classifier_num_repeat", "anchor_base_scale"), config_dict[model_name])))
     if pretrained:
         config['pretrained_backbone'] = False
     # create modules
@@ -108,33 +107,33 @@ def _efficientdet(model_name, pretrained=False, num_classes=90, config=None):
     return model
 
 
-def efficientdet_d0(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d0", pretrained, num_classes, config)
+def efficientdet_d0(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d0", pretrained, num_classes)
 
 
-def efficientdet_d1(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d1", pretrained, num_classes, config)
+def efficientdet_d1(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d1", pretrained, num_classes)
 
 
-def efficientdet_d2(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d2", pretrained, num_classes, config)
+def efficientdet_d2(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d2", pretrained, num_classes)
 
 
-def efficientdet_d3(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d3", pretrained, num_classes, config)
+def efficientdet_d3(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d3", pretrained, num_classes)
 
 
-def efficientdet_d4(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d4", pretrained, num_classes, config)
+def efficientdet_d4(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d4", pretrained, num_classes)
 
 
-def efficientdet_d5(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d5", pretrained, num_classes, config)
+def efficientdet_d5(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d5", pretrained, num_classes)
 
 
-def efficientdet_d6(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d6", pretrained, num_classes, config)
+def efficientdet_d6(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d6", pretrained, num_classes)
 
 
-def efficientdet_d7(pretrained=False, num_classes=90, config=None):
-    return _efficientdet("efficientdet_d7", pretrained, num_classes, config)
+def efficientdet_d7(pretrained=False, num_classes=90):
+    return _efficientdet("efficientdet_d7", pretrained, num_classes)

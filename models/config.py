@@ -8,8 +8,7 @@ default_config = {
     # backbone
     "pretrained_backbone": True,
     "backbone_norm_layer": FrozenBatchNorm2d,
-    # "backbone_freeze": ("conv_first", "layer1"),  # "layer2"
-    "backbone_freeze": ("",),  # 若计算资源不够(batch_size过小)，可将整个backbone freeze
+    "backbone_freeze": ("",),  # freeze backbone all
     # anchor:
     "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
     "anchor_aspect_ratios": ((1., 1.), (0.7, 1.4), (1.4, 0.7)),  # H, W
