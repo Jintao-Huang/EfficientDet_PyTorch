@@ -11,7 +11,7 @@ import time
 
 
 def to(images, targets, device):
-    """device转换
+    """
 
     :param images: List[Tensor[C, H, W]]
     :param targets: List[Dict] / None
@@ -19,7 +19,8 @@ def to(images, targets, device):
     :return: images: List[Tensor], targets: List[Dict] / None
     """
     for i in range(len(images)):
-        images[i] = images[i].to(device)
+        if images is not None:
+            images[i] = images[i].to(device)
         if targets is not None:
             targets[i]["boxes"] = targets[i]["boxes"].to(device)
             targets[i]["labels"] = targets[i]["labels"].to(device)
@@ -27,24 +28,28 @@ def to(images, targets, device):
 
 
 class Predictor:
+    """$"""
+
     def __init__(self, model, device):
         self.model = model
         self.device = device
         self._pred_video_now = False
 
-    def pred(self, images, image_size, score_thresh=0.5, nms_thresh=0.5):
+    def pred(self, image, image_size="max", score_thresh=0.5, nms_thresh=0.5):
         """
 
-        :param images: List[Tensor[C, H, W]]
+        :param image: Tensor[C, H, W]
         :param image_size:
         :param score_thresh:
         :param nms_thresh:
         :return: target
         """
+        if image_size == "max":
+            image_size = max(image.shape[-2:])
         if not self._pred_video_now:
             self.model.eval()
         with torch.no_grad():
-            x, _ = to(images, None, self.device)
+            x, _ = to([image], None, self.device)
             target = self.model(x, None, image_size, score_thresh, nms_thresh)
         return target
 
@@ -60,9 +65,8 @@ class Predictor:
 
         image_o = pil_to_cv(image)
         image = trans.ToTensor()(image)
-        if image_size == "max":
-            image_size = max(image.shape[-2:])
-        target = self.pred([image], image_size, score_thresh, nms_thresh)[0]
+
+        target = self.pred(image, image_size, score_thresh, nms_thresh)[0]
         draw_target_in_image(image_o, target)
         return image_o
 
@@ -73,7 +77,8 @@ class Predictor:
         cv.imshow("predictor", image_show)
         cv.waitKey(0)
 
-    def _default_out_path(self, in_path):
+    @staticmethod
+    def _default_out_path(in_path):
         """
 
         :param in_path: str
