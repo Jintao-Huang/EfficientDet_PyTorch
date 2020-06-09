@@ -225,7 +225,7 @@ class XMLProcessor:
         anno_path = os.path.join(annos_dir, xml_fname)
         # 2. 检测图片存在
         if not os.path.exists(image_path):  # 图片不存在
-            raise FileNotFoundError("file(%s) not found" % image_path)
+            raise FileNotFoundError("%s not found" % image_path)
 
         # 3. 获取ann数据
         with open(anno_path, "r", encoding="utf-8") as f:
@@ -237,13 +237,13 @@ class XMLProcessor:
             text, re.DOTALL)
 
         if len(data_list) == 0:  # 没有框
-            print("| not target in %s. but we still put it in" % image_fname)
+            print("| no target in %s. but we still put it in" % image_fname)
         # 4. 处理数据
         box_list, label_list = [], []  # len(NUMi, 4), len(NUMi)
         for object_name, left, top, right, bottom in data_list:
             label = category.get(object_name)  # object_name 是否存在于 category中. label: int
             if label is None:  # 目标名不在category中
-                raise ValueError("%s not in `category`" % object_name)
+                raise ValueError("`%s` not in `category`" % object_name)
             if label == -1:
                 continue
             box_list.append([int(left), int(top), int(right), int(bottom)])  # int() 不需要担心 str存在空格

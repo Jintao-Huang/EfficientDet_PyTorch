@@ -222,8 +222,8 @@ class PreProcess(nn.Module):
     def forward(self, image_list, target_list, max_size):
         """
 
-        :param image_list: List[Tensor[C, H, W]]  const. C=3. RGB
-        :param target_list: List[Dict("boxes"...)]  const
+        :param image_list: const List[Tensor[C, H, W]]. C=3. RGB
+        :param target_list: const List[Dict("boxes"...)]
         :return: ImageList{.tensor[N, C, H, W]}, targets: List[Dict]"""
 
         image_sizes_ori = []
@@ -248,11 +248,11 @@ class PreProcess(nn.Module):
     def resize_max(image, target=None, max_width=None, max_height=None):
         """将图像resize成最大最小不超过max_width, max_height的图像
 
-        :param image: Tensor(C, H, W). const
-        :param target: dict("boxes"). const
+        :param image: const Tensor(C, H, W).
+        :param target: const Dict("boxes"...).
         :param max_width: int
         :param max_height: int
-        :return: shape(C, H, W).
+        :return: Tensor(C, H, W). copy.
         """
         # 1. 输入
         height_ori, width_ori = image.shape[-2:]  # original
@@ -268,7 +268,7 @@ class PreProcess(nn.Module):
         image = F.interpolate(image[None], (height, width), mode='bilinear', align_corners=False)[0]
         if target is not None:
             target = {
-                "labels": target["labels"],  # 可以clone()
+                "labels": target["labels"].clone(),  # 可以不clone()
                 "boxes": target["boxes"].clone()
             }
             target["boxes"] = target["boxes"] * height / height_ori
@@ -278,7 +278,7 @@ class PreProcess(nn.Module):
     def zero_padding(image, padding_value=0., max_padding=None):
         """
 
-        :param image: Tensor[C, H, W]
+        :param image: const Tensor[C, H, W]
         :param padding_value: float.
         :param max_padding: int. padding后的最大尺度. 默认max(image.shape)
         :return: Tensor[C, X, X]."""

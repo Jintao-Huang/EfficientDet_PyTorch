@@ -19,6 +19,8 @@ class Logger:
         self.mini_start_time = None
 
     def new_epoch(self, epoch, steps_each_epoch, lr):
+        if self.writer is None:
+            raise ValueError("`self.writer` has closed")
         self.epoch = epoch
         self.steps_each_epoch = steps_each_epoch
         self.lr = lr
@@ -33,9 +35,9 @@ class Logger:
         if self.steps % self.print_steps == 0:
             self._print_mes()
             self._log_mes({"loss": loss})
-        self._log_mes({"loss": loss})
         if self.steps == self.steps_each_epoch:
             self._print_mes(last=True)
+            self._log_mes({"loss": loss})
 
     def _log_mes(self, logs):
         for key, value in logs.items():
@@ -52,3 +54,8 @@ class Logger:
               (self.epoch, self.steps, self.steps_each_epoch, self.steps / self.steps_each_epoch * 100,
                loss_mean, time_, self.lr), flush=True)
         self.mini_start_time = time.time()
+
+    def close(self):
+        if self.writer:
+            self.writer.close()
+        self.writer = None
