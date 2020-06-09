@@ -27,11 +27,11 @@ class Tester:
                     break
 
             ap_dict = self.ap_counter.get_ap_dict()
-            self.ap_counter.init_table()  # clear memory
-            self.print_mes(i + 1, ap_dict)
+            self._print_mes(i + 1, ap_dict)
+        self.ap_counter.init_table()  # clear memory
         return ap_dict
 
-    def print_mes(self, steps, ap_dict):
+    def _print_mes(self, steps, ap_dict):
         test_num_samples = min(steps * self.batch_size, self.num_samples)
         print("Test | Samples: %d/%d (%.2f%%)" %
               (test_num_samples, self.num_samples,
