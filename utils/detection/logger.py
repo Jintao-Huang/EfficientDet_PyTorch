@@ -1,6 +1,5 @@
 # Author: Jintao Huang
 # Time: 2020-6-7
-from tensorboardX import SummaryWriter
 import time
 
 
@@ -34,9 +33,9 @@ class Logger:
         self.loss_sum += loss
         if self.steps % self.print_steps == 0 or self.steps == self.steps_each_epoch:
             self._print_mes(last=self.steps == self.steps_each_epoch)
-        self._log_mes({"loss": loss})
+        self.log_mes({"loss": loss})
 
-    def _log_mes(self, logs):
+    def log_mes(self, logs):
         for key, value in logs.items():
             self.writer.add_scalar(key, value, self.epoch * self.steps_each_epoch + self.steps)
 

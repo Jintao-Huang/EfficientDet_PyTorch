@@ -21,7 +21,7 @@ labels_map = {
     # ...
 }
 
-comment = ""
+comment = "-d1"
 
 
 # --------------------------------
@@ -34,13 +34,13 @@ def lr_func(epoch):
         return 0.01
     elif 4 <= epoch < 6:
         return 0.025
-    elif 6 <= epoch < 54:
+    elif 6 <= epoch < 110:
         return 0.05
-    elif 54 <= epoch < 57:
+    elif 110 <= epoch < 116:
         return 0.02
-    elif 57 <= epoch < 59:
+    elif 116 <= epoch < 118:
         return 5e-3
-    elif 59 <= epoch < 60:
+    elif 118 <= epoch < 120:
         return 1e-3
 
 
@@ -55,14 +55,14 @@ def main():
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
     test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5, 0.5)
-    checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 2000),
-                      Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
-                      Saver(model), 8)
-    lr_scheduler = LRScheduler(optim, lr_func)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
+    checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 2000),
+                      Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
+                      Saver(model), logger, 8)
+    lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
-    trainer.train((0, 60))
+    trainer.train((0, 120))
     writer.close()
 
 
