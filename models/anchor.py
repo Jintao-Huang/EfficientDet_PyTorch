@@ -9,9 +9,9 @@ class AnchorGenerator(nn.Module):
     def __init__(self, base_scale, scales=None, aspect_ratios=None, pyramid_levels=None):
         """
 
-        :param base_scale: 基准尺度(anchor_size / stride)
+        :param base_scale: float. 基准尺度(anchor_size / stride)
         :param scales: tuple[float]. scales in single feature.
-        :param aspect_ratios: tuple[tuple(H, W)].
+        :param aspect_ratios: tuple[float] / tuple[tuple[float]].
         :param pyramid_levels: tuple[int]
         """
         super(AnchorGenerator, self).__init__()
@@ -29,7 +29,7 @@ class AnchorGenerator(nn.Module):
         """
 
         :param x: (images)Tensor[N, 3, H, W]. need: {.shape, .device, .dtype}
-        :return: anchors[X(F*H*W*A), 4]. (left, top, right, bottom)
+        :return: anchors: Tensor[X(F*H*W*A), 4]. (left, top, right, bottom)
         """
         image_size, dtype, device = x.shape[3], x.dtype, x.device
         if self.image_size == image_size:  # Anchors has been generated

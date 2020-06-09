@@ -55,18 +55,15 @@ class Checker:
                 train_ap_dict = self.train_tester.test(last)
                 train_map = sum(train_ap_dict.values()) / len(train_ap_dict)
                 if self.test_tester is None:
-                    fname = "model_epoch%d_train%.4f.pth" % \
-                            (epoch, train_map)
+                    fname = "model_epoch%d_train%.4f.pth" % (epoch, train_map)
                     self.saver.save(fname)
             if self.test_tester:
                 print("----------------------------- Test Dataset")
                 test_ap_dict = self.test_tester.test(last)
                 test_map = sum(test_ap_dict.values()) / len(test_ap_dict)
                 if self.train_tester:
-                    fname = "model_epoch%d_train%.4f_test%.4f.pth" % \
-                            (epoch, train_map, test_map)
+                    fname = "model_epoch%d_train%.4f_test%.4f.pth" % (epoch, train_map, test_map)
                 else:
-                    fname = "model_epoch%d_test%.4f.pth" % \
-                            (epoch, test_map)
+                    fname = "model_epoch%d_test%.4f.pth" % (epoch, test_map)
                 self.saver.save(fname)
             print("-----------------------------")

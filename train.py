@@ -23,7 +23,7 @@ labels_map = {
 
 # --------------------------------
 def lr_func(epoch):
-    if epoch < 1:
+    if 0 <= epoch < 1:
         return 1e-4
     elif 1 <= epoch < 2:
         return 1e-3
