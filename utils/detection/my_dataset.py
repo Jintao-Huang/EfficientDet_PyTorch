@@ -27,6 +27,7 @@ class MyDataset(tud.Dataset):
         """
         self.root_dir = root_dir
         self.images_folder = images_folder or "JPEGImages"
+        assert len(image_fname_list) == len(target_list)
         self.image_fname_list = image_fname_list
         self.target_list = target_list
         self.trans_func = trans_func or self._default_trans_func

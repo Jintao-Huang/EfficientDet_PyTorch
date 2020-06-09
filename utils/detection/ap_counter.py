@@ -110,7 +110,7 @@ class APCounter:
 
     @staticmethod
     def _calc_ap(recall_list, prec_list):
-        """recall_arr(单调递增), prec_arr. (recall, prec)为一个点"""
+        """recall_list(单调递增), prec_list. (recall, prec)为一个点"""
 
         # 1. 预处理
         recall_list.insert(0, 0.)

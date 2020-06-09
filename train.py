@@ -59,7 +59,7 @@ def main():
     logger = Logger(50, None)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     trainer.train((0, 60))
-    logger.writer.close()
+    logger.close()
 
 
 if __name__ == "__main__":
