@@ -7,6 +7,8 @@ from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, 
 from tensorboardX import SummaryWriter
 
 batch_size = 32
+comment = "-d1,wd=4e-5,bs=32,lr=0.05"
+
 # --------------------------------
 root_dir = r'.'
 images_folder = 'JPEGImages'
@@ -20,8 +22,6 @@ labels_map = {
     1: "car"
     # ...
 }
-
-comment = "-d1"
 
 
 # --------------------------------
@@ -38,10 +38,8 @@ def lr_func(epoch):
         return 0.05
     elif 110 <= epoch < 116:
         return 0.02
-    elif 116 <= epoch < 118:
+    elif 116 <= epoch < 120:
         return 5e-3
-    elif 118 <= epoch < 120:
-        return 1e-3
 
 
 def main():
@@ -51,7 +49,7 @@ def main():
         device = torch.device('cpu')
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
-    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
+    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=weight_decay)
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
     test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5, 0.5)
@@ -59,7 +57,7 @@ def main():
     logger = Logger(50, writer)
     checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 2000),
                       Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
-                      Saver(model), logger, 8)
+                      Saver(model), logger, 8, 2)
     lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     trainer.train((0, 120))
