@@ -15,7 +15,7 @@ train_pickle_fname = "images_targets_train_hflip.pkl"
 test_pickle_fname = "images_targets_test.pkl"
 
 labels_map = {
-    0: "people",
+    0: "person",
     1: "car"
     # ...
 }
