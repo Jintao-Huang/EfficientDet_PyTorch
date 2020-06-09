@@ -243,7 +243,7 @@ class XMLProcessor:
         for object_name, left, top, right, bottom in data_list:
             label = category.get(object_name)  # object_name 是否存在于 category中. label: int
             if label is None:  # 目标名不在category中
-                raise ValueError("`%s` not in `category`" % object_name)
+                raise ValueError("`%s` not in category. path: %s" % (object_name, anno_path))
             if label == -1:
                 continue
             box_list.append([int(left), int(top), int(right), int(bottom)])  # int() 不需要担心 str存在空格

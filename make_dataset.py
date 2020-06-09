@@ -17,12 +17,12 @@ test_pkl_fname = "images_targets_test.pkl"
 category = {
     # -1 -> ignore
     "trash": -1,
-    "people": 0,
+    "person": 0,
     "car": 1,
     # ...
 }
 labels_map = {
-    0: "people",
+    0: "person",
     1: "car"
     # ...
 }
