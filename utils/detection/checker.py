@@ -3,7 +3,16 @@
 
 
 class Checker:
-    def __init__(self, train_tester, test_tester, saver, logger, check_epoch):
+    def __init__(self, train_tester, test_tester, saver, logger, check_epoch, ignore_num):
+        """
+
+        :param train_tester:
+        :param test_tester:
+        :param saver:
+        :param logger:
+        :param check_epoch: int. 每几个epoch check一次
+        :param ignore_num: int. 前几次忽略的次数. 不check
+        """
         assert train_tester or test_tester
         self.train_tester = train_tester
         self.test_tester = test_tester
@@ -11,9 +20,13 @@ class Checker:
         self.saver = saver
         self.logger = logger
         self.check_epoch = check_epoch
+        self.ignore_num = ignore_num  # ignore check_epoch
 
     def step(self, epoch, last=False):
         if last or epoch % self.check_epoch == self.check_epoch - 1:
+            if self.ignore_num > 0:
+                self.ignore_num -= 1
+                return
             if self.train_tester:
                 print("----------------------------- Train Dataset")
                 train_ap_dict = self.train_tester.test(last)
