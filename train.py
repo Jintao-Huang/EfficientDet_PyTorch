@@ -49,7 +49,7 @@ def main():
         device = torch.device('cpu')
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
-    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=weight_decay)
+    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
     test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5, 0.5)
