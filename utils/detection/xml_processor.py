@@ -60,6 +60,9 @@ class XMLProcessor:
             print("\r>> %d / %d" % (i + 1, len(xml_fname_list)), end="", flush=True)
         print()
         save_to_pickle((image_fname_list, target_list), pkl_path)
+        print("-------------------------------------------------")
+        print("Original:")
+        self.test_dataset(pkl_path)
 
     def calc_anchor_ratios_distribute(self, pkl_fname, div_lines=None):
         """查看boxes的比例分布. H / W
@@ -274,9 +277,7 @@ class XMLProcessor:
 
         if not self.exist_ok and (os.path.exists(train_pkl_path) or os.path.exists(test_pkl_path)):
             raise FileExistsError("%s or %s is exists" % (train_pkl_path, test_pkl_path))
-        print("-------------------------------------------------")
-        print("Total:")
-        self.test_dataset(total_pkl_fname)
+
         total_image_fname_list, total_target_list = load_from_pickle(total_pkl_path)
 
         # 乱序处理
@@ -318,10 +319,6 @@ class XMLProcessor:
 
         if not self.exist_ok and os.path.exists(mini_pkl_path):
             raise FileExistsError("%s is exists" % mini_pkl_path)
-
-        print("-------------------------------------------------")
-        print("Total:")
-        self.test_dataset(total_pkl_path)
 
         total_image_fname_list, total_target_list = load_from_pickle(total_pkl_path)
 
@@ -373,3 +370,6 @@ class XMLProcessor:
 
         # 3. 保存
         save_to_pickle((image_fname_list, target_list), new_pkl_path)
+        print("-------------------------------------------------")
+        print("HFlip:")
+        self.test_dataset(new_pkl_path)
