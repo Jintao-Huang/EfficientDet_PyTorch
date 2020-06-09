@@ -23,10 +23,10 @@ class Checker:
         self.ignore_num = ignore_num  # ignore check_epoch
 
     def step(self, epoch, last=False):
-        if self.ignore_num > 0:
-            self.ignore_num -= 1
-            return
         if last or epoch % self.check_epoch == self.check_epoch - 1:
+            if self.ignore_num > 0:
+                self.ignore_num -= 1
+                return
             if self.train_tester:
                 print("----------------------------- Train Dataset")
                 train_ap_dict = self.train_tester.test(last)
