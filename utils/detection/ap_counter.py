@@ -64,6 +64,7 @@ class APCounter:
         print("AP: ")
         for label, ap in ap_dict.items():
             print("  %s: %f" % (label, ap))
+        print("", end="", flush=True)
 
     @staticmethod
     def _is_box_correct(pred_box, target_boxes, matched, have_detected, iou_thresh=0.5):
