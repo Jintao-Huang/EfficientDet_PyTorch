@@ -4,6 +4,7 @@
 import torch
 from models.efficientdet import efficientdet_d1
 from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, get_dataset_from_pickle
+from tensorboardX import SummaryWriter
 
 batch_size = 32
 # --------------------------------
@@ -19,6 +20,8 @@ labels_map = {
     1: "car"
     # ...
 }
+
+comment = ""
 
 
 # --------------------------------
@@ -48,7 +51,7 @@ def main():
         device = torch.device('cpu')
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
-    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=1e-4, nesterov=True)
+    optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
     test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5, 0.5)
@@ -56,10 +59,11 @@ def main():
                       Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
                       Saver(model), 8)
     lr_scheduler = LRScheduler(optim, lr_func)
-    logger = Logger(50, None)
+    writer = SummaryWriter(comment=comment)
+    logger = Logger(50, writer)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     trainer.train((0, 60))
-    logger.close()
+    writer.close()
 
 
 if __name__ == "__main__":
