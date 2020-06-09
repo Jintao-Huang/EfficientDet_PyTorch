@@ -19,6 +19,8 @@ class Logger:
         self.mini_start_time = None
 
     def new_epoch(self, epoch, steps_each_epoch, lr):
+        if self.writer is None:
+            raise ValueError("`self.writer` has closed")
         self.epoch = epoch
         self.steps_each_epoch = steps_each_epoch
         self.lr = lr
@@ -54,5 +56,6 @@ class Logger:
         self.mini_start_time = time.time()
 
     def close(self):
-        self.writer.close()
+        if self.writer:
+            self.writer.close()
         self.writer = None
