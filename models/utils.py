@@ -68,11 +68,13 @@ class FrozenBatchNorm2d(nn.Module):
         self.register_buffer('num_batches_tracked', torch.tensor(0, dtype=torch.long))  # Prevent load errors
 
     def forward(self, x):
+        if x.dim() != 4:
+            raise ValueError("expected 4D input (got %dD input)" % x.dim())
         mean, var = self.running_mean, self.running_var
         weight, bias = self.weight, self.bias
-        if x.dim() == 4:
-            mean, var = mean[:, None, None], var[:, None, None]
-            weight, bias = weight[:, None, None], bias[:, None, None]
+
+        mean, var = mean[:, None, None], var[:, None, None]
+        weight, bias = weight[:, None, None], bias[:, None, None]
         return (x - mean) * torch.rsqrt(var + self.eps) * weight + bias
 
 
@@ -306,7 +308,7 @@ class PostProcess(nn.Module):
             labels, scores = labels[positive_idx], scores[positive_idx]
             boxes = decode_boxes(regression[positive_idx], anchors[positive_idx])
             boxes = clip_boxes_to_image(boxes, image_size)  # 裁剪超出图片的boxes (Cut out boxes beyond the picture)
-            keep_idxs = batched_nms(boxes, scores, labels, nms_thresh)  # scores 不用预先排序
+            keep_idxs = batched_nms(boxes, scores, labels, nms_thresh)  # scores 不用预先排序. 输出的内容经排序
             scores, labels, boxes = scores[keep_idxs], labels[keep_idxs], boxes[keep_idxs]
             boxes *= image_size_ori[0] / image_size[0]  # boxes回归原图
             targets.append({
