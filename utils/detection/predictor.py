@@ -14,10 +14,19 @@ import time
 class Predictor:
     """$"""
 
-    def __init__(self, model, device):
+    def __init__(self, model, device, colors_map=None, labels_map=None):
+        """
+
+        :param model:
+        :param device:
+        :param colors_map: Dict / List. _pred_image()中会用到`colors_map`, `labels_map`
+        :param labels_map: Dict / List
+        """
         self.model = model.to(device)
         self.device = device
         self._pred_video_now = False
+        self.colors_map = colors_map
+        self.labels_map = labels_map
 
     def pred(self, image, image_size="max", score_thresh=0.5, nms_thresh=0.5):
         """
@@ -51,7 +60,7 @@ class Predictor:
         image = trans.ToTensor()(image)
 
         target = self.pred(image, image_size, score_thresh, nms_thresh)
-        draw_target_in_image(image_o, target)
+        draw_target_in_image(image_o, target, self.colors_map, self.labels_map)
         return image_o
 
     def pred_image_and_show(self, image_path, image_size="max", score_thresh=0.5, nms_thresh=0.5):

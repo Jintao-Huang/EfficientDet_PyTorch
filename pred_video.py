@@ -3,7 +3,7 @@
 
 from models.efficientdet import efficientdet_d0
 import torch
-from utils.detect.predictor import Predictor
+from utils.detection.predictor import Predictor
 
 # -------------------------- 参数
 video_path = "video/1.mp4"

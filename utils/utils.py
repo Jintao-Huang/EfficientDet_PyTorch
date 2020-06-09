@@ -35,21 +35,21 @@ def set_seed(seed=0):
     torch.manual_seed(seed)
     np.random.seed(seed)
     # 取消cudnn加速时的省略精度产生的随机性
-    # cudnn.benchmark = True  # if benchmark=True, deterministic will be False
     cudnn.deterministic = True
+    # cudnn.benchmark = True  # if benchmark == True, deterministic will be False
 
 
 def save_params(model, filepath):
     torch.save(model.state_dict(), filepath)
 
 
-def load_params(model, filepath, drop_layers=(), prefix="", strict=True):
+def load_params(model, filepath, prefix="", drop_layers=(), strict=True):
     """
 
     :param model: 变
     :param filepath: str
-    :param drop_layers: 对加完前缀后的pth进行剔除.
     :param prefix: 在pth的state_dict加上前缀.
+    :param drop_layers: 对加完前缀后的pth进行剔除.
     :param strict: bool
     """
 
