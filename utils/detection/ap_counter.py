@@ -40,14 +40,14 @@ class APCounter:
                 target_label = target_label.item()
                 self.target_num_list[target_label] += 1
             # 2. pred_table_list
-            have_detected = torch.zeros(target_labels.shape[0])  # 记录已经被检测过的
+            have_detected = torch.zeros(target_labels.shape[0], dtype=torch.bool)  # 记录已经被检测过的
             for pred_box, pred_label, pred_score in zip(pred_boxes, pred_labels, pred_scores):
                 pred_label = pred_label.item()
                 pred_score = pred_score.item()
                 if pred_score < self.score_thresh:
                     continue
                 # 选择同类型的target_boxes
-                matched = torch.nonzero(target_labels == pred_label, as_tuple=True)  # (N)
+                matched = torch.nonzero(target_labels == pred_label, as_tuple=False)  # (N)
                 correct = self._is_box_correct(pred_box, target_boxes, matched, have_detected, self.iou_thresh)
                 self.pred_table_list[pred_label].append((pred_score, correct))
 
@@ -73,7 +73,7 @@ class APCounter:
         :param pred_box: Tensor[4]
         :param target_boxes: Tensor[N, 4]. all
         :param matched: Tensor[NUM]
-        :param have_detected: Tensor[N]
+        :param have_detected: Tensor[N]. bool
         :param iou_thresh: int
         :return: bool
         """
@@ -83,10 +83,10 @@ class APCounter:
         iou_max, idx = torch.max(box_iou(pred_box[None], t_boxes)[0], dim=0)  # (N) -> ()
         if iou_max < iou_thresh:
             return False
-        elif have_detected[matched[idx]] == 1:
+        elif have_detected[matched[idx]]:
             return False
         else:
-            have_detected[matched[idx]] = 1
+            have_detected[matched[idx]] = True
             return True
 
     @staticmethod
