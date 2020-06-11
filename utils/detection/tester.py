@@ -6,7 +6,8 @@ import torch
 
 
 class Tester:
-    def __init__(self, model, test_dataset, batch_size, device, ap_counter, test_samples=1000):
+    def __init__(self, model, test_dataset, batch_size, device, ap_counter, test_samples=1000,
+                 score_thresh=0.5, nms_thresh=0.5):
         self.model = model.to(device)
         self.test_loader = DataLoader(test_dataset, batch_size, True, collate_fn=collate_fn, pin_memory=True)
         self.device = device
@@ -14,16 +15,18 @@ class Tester:
         self.batch_size = batch_size
         self.ap_counter = ap_counter
         self.test_step = test_samples // batch_size
+        self.score_thresh = score_thresh
+        self.nms_thresh = nms_thresh
 
-    def test(self, last=False):
+    def test(self, total=False):
         self.model.eval()
         self.ap_counter.init_table()
         with torch.no_grad():
             for i, (x, y) in enumerate(self.test_loader):
                 x, y = to(x, y, self.device)
-                pred = self.model(x)
+                pred = self.model(x, score_thresh=self.score_thresh, nms_thresh=self.nms_thresh)
                 self.ap_counter.add(pred, y)
-                if not last and i + 1 == self.test_step:
+                if not total and i + 1 == self.test_step:
                     break
 
             ap_dict = self.ap_counter.get_ap_dict()

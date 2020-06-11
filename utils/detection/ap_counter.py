@@ -5,14 +5,12 @@ import torch
 
 
 class APCounter:
-    def __init__(self, labels_map, score_thresh=0.5, iou_thresh=0.5):
+    def __init__(self, labels_map, iou_thresh=0.5):
         """
 
         :param labels_map: Dict[int: str]
-        :param score_thresh:
         :param iou_thresh:
         """
-        self.score_thresh = score_thresh
         self.iou_thresh = iou_thresh
         self.label_list = [labels_map[i] for i in range(len(labels_map))]
         # List[List[tuple(score(float), correct(bool))]]. 每个类一个table
@@ -44,8 +42,6 @@ class APCounter:
             for pred_box, pred_label, pred_score in zip(pred_boxes, pred_labels, pred_scores):
                 pred_label = pred_label.item()
                 pred_score = pred_score.item()
-                if pred_score < self.score_thresh:
-                    continue
                 # 选择同类型的target_boxes
                 matched = torch.nonzero(target_labels == pred_label, as_tuple=True)  # (N)
                 correct = self._is_box_correct(pred_box, target_boxes, matched, have_detected, self.iou_thresh)
