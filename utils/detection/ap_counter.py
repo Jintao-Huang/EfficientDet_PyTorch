@@ -47,7 +47,7 @@ class APCounter:
                 if pred_score < self.score_thresh:
                     continue
                 # 选择同类型的target_boxes
-                matched = torch.nonzero(target_labels == pred_label, as_tuple=False)  # (N)
+                matched = torch.nonzero(target_labels == pred_label, as_tuple=True)  # (N)
                 correct = self._is_box_correct(pred_box, target_boxes, matched, have_detected, self.iou_thresh)
                 self.pred_table_list[pred_label].append((pred_score, correct))
 
@@ -83,10 +83,10 @@ class APCounter:
         iou_max, idx = torch.max(box_iou(pred_box[None], t_boxes)[0], dim=0)  # (N) -> ()
         if iou_max < iou_thresh:
             return False
-        elif have_detected[matched[idx]]:
+        elif have_detected[matched[0][idx]]:
             return False
         else:
-            have_detected[matched[idx]] = True
+            have_detected[matched[0][idx]] = True
             return True
 
     @staticmethod
