@@ -28,8 +28,8 @@ class Logger:
         self.epoch_start_time = time.time()
         self.mini_start_time = time.time()
 
-    def step(self, loss):
-        self.steps += 1
+    def step(self, loss, steps):
+        self.steps = steps
         self.loss_sum += loss
         if self.steps % self.print_steps == 0 or self.steps == self.steps_each_epoch:
             self._print_mes(last=self.steps == self.steps_each_epoch)
