@@ -62,7 +62,7 @@ class XMLProcessor:
         save_to_pickle((image_fname_list, target_list), pkl_path)
         print("-------------------------------------------------")
         print("Original:")
-        self.test_dataset(pkl_path)
+        self.test_dataset(pkl_fname)
 
     def calc_anchor_ratios_distribute(self, pkl_fname, div_lines=None):
         """查看boxes的比例分布. H / W
@@ -209,7 +209,7 @@ class XMLProcessor:
         save_to_pickle((new_image_fname_list, new_target_list), new_pkl_path)
         print("-------------------------------------------------")
         print("Concat:")
-        self.test_dataset(new_pkl_path)
+        self.test_dataset(new_pkl_fname)
 
     def _get_data_from_xml(self, xml_fname):
         """get img_fname, target from xml. 并检测图片已经存在
@@ -335,7 +335,7 @@ class XMLProcessor:
         save_to_pickle((mini_image_fname_list, mini_target_list), mini_pkl_path)
         print("-------------------------------------------------")
         print("Mini:")
-        self.test_dataset(mini_pkl_path)
+        self.test_dataset(mini_pkl_fname)
 
     def hflip_from_pickle(self, old_pkl_fname, new_pkl_fname=None, prefix="-"):
         """将images, 以及pickle进行水平翻转
@@ -372,4 +372,4 @@ class XMLProcessor:
         save_to_pickle((image_fname_list, target_list), new_pkl_path)
         print("-------------------------------------------------")
         print("HFlip:")
-        self.test_dataset(new_pkl_path)
+        self.test_dataset(new_pkl_fname)
