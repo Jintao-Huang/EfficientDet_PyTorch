@@ -61,6 +61,8 @@ class APCounter:
 
     @staticmethod
     def print_ap(ap_dict):
+        mean_ap = sum(ap_dict.values()) / len(ap_dict)
+        print("mAP: %f" % mean_ap)
         print("AP: ")
         for label, ap in ap_dict.items():
             print("  %s: %f" % (label, ap))
