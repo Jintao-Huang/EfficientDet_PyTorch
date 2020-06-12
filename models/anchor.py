@@ -15,11 +15,13 @@ class AnchorGenerator(nn.Module):
         :param pyramid_levels: tuple[int]
         """
         super(AnchorGenerator, self).__init__()
-        self.scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
+        pyramid_levels = pyramid_levels or (3, 4, 5, 6, 7)
+        scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
+        if not isinstance(scales[0], (list, tuple)):
+            self.scales = (scales,) * len(pyramid_levels)
         aspect_ratios = aspect_ratios or (1., 0.5, 2.)
         if not isinstance(aspect_ratios[0], (list, tuple)):
-            self.aspect_ratios = (aspect_ratios,) * len(scales)
-        pyramid_levels = pyramid_levels or (3, 4, 5, 6, 7)
+            self.aspect_ratios = (aspect_ratios,) * len(pyramid_levels)
         self.strides = [2 ** i for i in pyramid_levels]
         self.base_scale = base_scale
         self.image_size = None  # int
@@ -38,9 +40,9 @@ class AnchorGenerator(nn.Module):
             self.image_size = image_size
 
         anchors_all = []
-        for stride in self.strides:
+        for stride, scales, aspect_ratios in zip(self.strides, self.scales, self.aspect_ratios):
             anchors_level = []
-            for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):
+            for scale in scales:
                 for aspect_ratio in aspect_ratios:
                     if image_size % stride != 0:
                         raise ValueError('input size must be divided by the stride.')
