@@ -87,7 +87,7 @@ class Predictor:
         imwrite(image, image_out_path)
 
     def pred_video_and_save(self, video_path, video_out_path=None, image_size="max", score_thresh=0.5, nms_thresh=0.5,
-                            exist_ok=False):
+                            exist_ok=False, show_on_time=False):
         video_out_path = video_out_path or self._default_out_path(video_path)
         if not exist_ok and os.path.exists(video_out_path):
             raise FileExistsError("%s is exists" % video_out_path)
@@ -109,10 +109,11 @@ class Predictor:
             image = cv_to_pil(image)  # -> PIL.Image
             image = self._pred_image(image, image_size, score_thresh, nms_thresh)
             print("\r>> %d / %d. 处理时间: %f" % (i + 1, frame_num, time.time() - start), end="", flush=True)
-            image_show = resize_max(image, 720, 1080)
-            cv.imshow("video", image_show)
-            if cv.waitKey(1) in (ord('q'), ord('Q')):
-                exit(0)
+            if show_on_time:
+                image_show = resize_max(image, 720, 1080)
+                cv.imshow("video", image_show)
+                if cv.waitKey(1) in (ord('q'), ord('Q')):
+                    exit(0)
             out.write(image)
         print()
         cap.release()

@@ -18,4 +18,4 @@ else:
 
 model = efficientdet_d0(True)
 predictor = Predictor(model, device)
-predictor.pred_video_and_save(video_path, None, "max", score_thresh, nms_thresh, False)
+predictor.pred_video_and_save(video_path, None, "max", score_thresh, nms_thresh, exist_ok=False, show_on_time=False)

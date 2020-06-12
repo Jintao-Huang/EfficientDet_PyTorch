@@ -8,3 +8,4 @@ datasets/
 runs/
 test.py
 pred.py
+parallel/
