@@ -5,7 +5,7 @@ import time
 
 class Logger:
     def __init__(self, print_steps, writer):
-        """Notice: 需要显式的关闭writer. `logger.writer.close()`"""
+        """Notice: 需要显式的关闭writer. `writer.close()`"""
         self.writer = writer
         self.print_steps = print_steps
         self.steps_each_epoch = None
