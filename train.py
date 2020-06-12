@@ -52,7 +52,7 @@ def main():
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
     test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
-    ap_counter = APCounter(labels_map, 0.5, 0.5)
+    ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
     checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 2000),

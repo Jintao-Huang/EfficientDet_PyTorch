@@ -8,17 +8,20 @@ class AnchorGenerator(nn.Module):
     def __init__(self, base_scale, scales=None, aspect_ratios=None, pyramid_levels=None):
         """
 
-        :param base_scale: 基准尺度(anchor_size / stride)
+        :param base_scale: float. 基准尺度(anchor_size / stride)
         :param scales: tuple[float]. scales in single feature.
         :param aspect_ratios: tuple[tuple(H, W)].
         :param pyramid_levels: tuple[int]
         """
         super(AnchorGenerator, self).__init__()
         self.scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
-        aspect_ratios = aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))
-        if not isinstance(aspect_ratios[0][0], (list, tuple)):
-            self.aspect_ratios = (aspect_ratios,) * len(scales)
         pyramid_levels = pyramid_levels or (3, 4, 5, 6, 7)
+        scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
+        aspect_ratios = aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))
+        if not isinstance(scales[0], (list, tuple)):
+            self.scales = (scales,) * len(pyramid_levels)
+        if not isinstance(aspect_ratios[0][0], (list, tuple)):
+            self.aspect_ratios = (aspect_ratios,) * len(pyramid_levels)
         self.strides = [2 ** i for i in pyramid_levels]
         self.base_scale = base_scale
         self.image_size = None  # int
@@ -28,7 +31,7 @@ class AnchorGenerator(nn.Module):
         """
 
         :param x: (images)Tensor[N, 3, H, W]. need: {.shape, .device, .dtype}
-        :return: anchors[X(F*H*W*A), 4]. (left, top, right, bottom)
+        :return: anchors: Tensor[X(F*H*W*A), 4]. (left, top, right, bottom)
         """
         image_size, dtype, device = x.shape[3], x.dtype, x.device
         if self.image_size == image_size:  # Anchors has been generated
@@ -37,9 +40,9 @@ class AnchorGenerator(nn.Module):
             self.image_size = image_size
 
         anchors_all = []
-        for stride in self.strides:
+        for stride, scales, aspect_ratios in zip(self.strides, self.scales, self.aspect_ratios):
             anchors_level = []
-            for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):
+            for scale in scales:
                 for aspect_ratio in aspect_ratios:
                     if image_size % stride != 0:
                         raise ValueError('input size must be divided by the stride.')
