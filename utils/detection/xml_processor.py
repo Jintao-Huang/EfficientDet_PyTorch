@@ -64,17 +64,22 @@ class XMLProcessor:
         print("Original:")
         self.test_dataset(pkl_fname)
 
-    def calc_anchor_ratios_distribute(self, pkl_fname, div_lines=None):
-        """查看boxes的比例分布. H / W
+    def calc_anchor_distribute(self, pkl_fname, ratios_div_lines=None, sizes_div_lines=None):
+        """查看boxes的比例分布(H / W), 大小分布(size)
 
         :param pkl_fname: str
-        :param div_lines: tensor = torch.linspace(0, 3, 31).
+        :param ratios_div_lines: Tensor = np.linspace(0, 3, 31).'
+        :param sizes_div_lines: Tensor = np.array([0, 8, 16, 32, 64, 128, 256, 512, 1024])
         """
-        div_lines = div_lines or torch.linspace(0, 3, 31)
+        if ratios_div_lines is None:
+            ratios_div_lines = np.linspace(0, 3, 31)
+        if sizes_div_lines is None:
+            sizes_div_lines = np.array([0, 8, 16, 32, 64, 128, 256, 512, 1024], dtype=np.long)
+
         pkl_path = os.path.join(self.pkl_dir, pkl_fname)
         _, target_list = load_from_pickle(pkl_path)
 
-        def get_ratio(box):
+        def get_ratio_size(box):
             """获得ratio
 
             :param box: shape(4,). ltrb
@@ -82,20 +87,40 @@ class XMLProcessor:
             """
             l, t, r, b = box
             w, h = r - l, b - t
-            return h / w
+            return (h / w).item(), torch.sqrt(w * h).item()
+
+        def get_distribute_index(arr, x):
+            """arr[idx] <= x < arr[idx + 1]"""
+            if x < arr[0]:
+                raise ValueError("x(%.2f) < arr[0](%.2f)" % (x, arr[0]))
+            for idx in reversed(range(len(arr))):
+                if x >= arr[idx]:
+                    break
+            return idx
 
         # ----------------------------- 计算distribute
-        distribute = torch.zeros_like(div_lines, dtype=torch.long)
+        ratios_distribute = np.zeros_like(ratios_div_lines, dtype=np.long)
+        sizes_distribute = np.zeros_like(sizes_div_lines, dtype=np.long)
         for i, target in enumerate(target_list):
             for box in target["boxes"]:
-                scale = get_ratio(box)
-                idx = torch.argmin(torch.abs(div_lines - scale))  # 距离哪个分布最近
-                distribute[idx] += 1
-        print("Anchor ratios distribute:")
-        for line in div_lines:
+                ratio, size = get_ratio_size(box)
+                ratio_idx = get_distribute_index(ratios_div_lines, ratio)
+                size_idx = get_distribute_index(sizes_div_lines, size)
+                ratios_distribute[ratio_idx] += 1
+                sizes_distribute[size_idx] += 1
+
+        print("Anchor ratios distribute(floor):")
+        for line in ratios_div_lines:
             print("%-7.1f|" % line, end="")
         print()
-        for num in distribute:
+        for num in ratios_distribute:
+            print("%-7d|" % num, end="")
+        print()
+        print("Anchor sizes distribute(floor):")
+        for line in sizes_div_lines:
+            print("%-7d|" % line, end="")
+        print()
+        for num in sizes_distribute:
             print("%-7d|" % num, end="")
         print()
 

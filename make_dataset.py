@@ -36,5 +36,5 @@ xml_processor = XMLProcessor(root_dir, images_folder, annos_folder, pkl_folder, 
 xml_processor.xmls_to_pickle(pkl_fname)
 xml_processor.split_train_test_from_pickle(pkl_fname, 750, train_pkl_fname, test_pkl_fname)
 xml_processor.hflip_from_pickle(train_pkl_fname, train_hflip_pkl_fname)
-xml_processor.calc_anchor_ratios_distribute(pkl_fname)
+xml_processor.calc_anchor_distribute(pkl_fname)
 xml_processor.show_dataset(train_hflip_pkl_fname, colors_map, True)
