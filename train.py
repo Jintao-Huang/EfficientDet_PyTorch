@@ -34,15 +34,16 @@ def lr_func(epoch):
         return 0.01
     elif 4 <= epoch < 6:
         return 0.025
-    elif 6 <= epoch < 110:
+    elif 6 <= epoch < 100:
         return 0.05
-    elif 110 <= epoch < 116:
+    elif 100 <= epoch < 116:
         return 0.02
     elif 116 <= epoch < 120:
         return 5e-3
 
 
 def main():
+    print("配置: %s" % comment, flush=True)
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -55,7 +56,7 @@ def main():
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
-    checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 2000),
+    checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 1000),
                       Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
                       Saver(model), logger, 8, 2)
     lr_scheduler = LRScheduler(optim, lr_func)

@@ -3,6 +3,7 @@
 from .utils import to, collate_fn
 from torch.utils.data import DataLoader
 import torch
+import math
 
 
 class Tester:
@@ -14,7 +15,7 @@ class Tester:
         self.num_samples = len(test_dataset)
         self.batch_size = batch_size
         self.ap_counter = ap_counter
-        self.test_step = test_samples // batch_size
+        self.test_step = math.ceil(test_samples / batch_size)
         self.score_thresh = score_thresh
         self.nms_thresh = nms_thresh
 

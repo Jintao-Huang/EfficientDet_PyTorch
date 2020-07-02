@@ -111,7 +111,7 @@ class XMLProcessor:
 
         print("Anchor ratios distribute(floor):")
         for line in ratios_div_lines:
-            print("%-7.1f|" % line, end="")
+            print("%-7.2f|" % line, end="")
         print()
         for num in ratios_distribute:
             print("%-7d|" % num, end="")
