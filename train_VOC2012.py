@@ -7,12 +7,13 @@ from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, 
 from tensorboardX import SummaryWriter
 from torchvision.datasets import VOCDetection
 
-batch_size = 1
-comment = "-d1,wd=4e-5,bs=32,lr=0.05"
+batch_size = 32
+comment = "-d0,wd=4e-5,bs=32,lr=0.05"
 
 # --------------------------------
-root_dir = r'D:\datasets'
+voc_dir = r'..'  # image_dir
 labels_map = VOC_Dataset.labels_int2str
+
 
 # --------------------------------
 def lr_func(epoch):
@@ -41,8 +42,8 @@ def main():
     model = efficientdet_d0(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
-    train_dataset = VOC_Dataset(VOCDetection(root_dir, image_set="train"))
-    test_dataset = VOC_Dataset(VOCDetection(root_dir, image_set="val"))
+    train_dataset = VOC_Dataset(VOCDetection(voc_dir, image_set="train"))
+    test_dataset = VOC_Dataset(VOCDetection(voc_dir, image_set="val"))
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
