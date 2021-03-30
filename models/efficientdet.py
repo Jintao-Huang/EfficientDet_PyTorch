@@ -67,7 +67,10 @@ class EfficientDet(nn.Module):
                 eval模式: result: Dict
         """
         assert isinstance(image_list, list) and isinstance(image_list[0], torch.Tensor)
-        image_size = image_size or self.image_size
+        if image_size:
+            image_size = max(image_size, self.image_size)
+        else:
+            image_size = self.image_size
         # Notice: anchor_size: 32 - 812.7. Please adjust the resolution according to the specific situation
         image_size = min(1920, image_size // 128 * 128)  # 需要被128整除
         image_list, targets = self.preprocess(image_list, targets, image_size)
