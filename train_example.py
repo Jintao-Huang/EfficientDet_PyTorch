@@ -1,5 +1,6 @@
 # Author: Jintao Huang
 # Time: 2020-5-22
+# This case applies to Debug to view the network architecture
 
 from models.efficientdet import efficientdet_d0
 from utils.display import pil_to_cv
