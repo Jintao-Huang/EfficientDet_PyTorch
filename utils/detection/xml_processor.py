@@ -50,8 +50,8 @@ class XMLProcessor:
         if not self.exist_ok and os.path.exists(pkl_path):
             raise FileExistsError("%s is exists" % pkl_path)
         # -----------------------------
-        image_fname_list = []  # len(N)
-        target_list = []  # len(N * dict("boxes": shape(NUMi, 4), "labels": shape(NUMi,))
+        image_fname_list = []  # len(N_图片)
+        target_list = []  # len(N_图片 * dict("boxes": shape(NUMi, 4), "labels": shape(NUMi,)). left, top, right, bottom
         xml_fname_list = os.listdir(annos_dir)
         for i, xml_fname in enumerate(xml_fname_list):
             image_fname, target = self._get_data_from_xml(xml_fname)
