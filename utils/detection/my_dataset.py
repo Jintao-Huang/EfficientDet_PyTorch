@@ -74,13 +74,13 @@ class VOC_Dataset(MyDataset):
         """
 
         :param root: str. 存放VOCdevkit的文件夹
-        :param year: int. e.g.2012
+        :param year: str. e.g. 0712, 2007, 2012
         :param image_set: str{"train", "val", "trainval", "test"}
         :param transforms: func(image: PIL.Image, target) -> (image: Tensor[C, H, W] RGB, target).
             default: self._default_trans_func
         """
         assert os.path.exists(root), "Please download VOC_datasets to this path"
-        root_dir = os.path.join(root, "VOCdevkit", "VOC%d" % year)
+        root_dir = os.path.join(root, "VOCdevkit", "VOC%s" % year)
         pkl_dir = os.path.join(root_dir, "pkl")
         os.makedirs(pkl_dir, exist_ok=True)
         pkl_path = os.path.join(pkl_dir, "voc_%s_%s" % (year, image_set))

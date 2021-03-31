@@ -10,7 +10,7 @@ batch_size = 32
 comment = "-d1,wd=4e-5,bs=32,lr=0.05"
 
 # --------------------------------
-voc_dir = r'D:\datasets'  # image_dir
+voc_dir = r'..'  # image_dir
 labels_map = VOC_Dataset.labels_int2str
 
 
@@ -43,8 +43,9 @@ def main():
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
-    train_dataset = VOC_Dataset(voc_dir, 2012, "trainval")
-    val_dataset = VOC_Dataset(voc_dir, 2007, "test")
+    # 数据集自行合并(The dataset merges by yourself)
+    train_dataset = VOC_Dataset(voc_dir, "0712", "trainval")
+    val_dataset = VOC_Dataset(voc_dir, "0712", "test")
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
