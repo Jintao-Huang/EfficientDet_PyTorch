@@ -2,7 +2,7 @@
 # Time: 2020-6-7
 
 import torch
-from models.efficientdet import efficientdet_d0
+from models.efficientdet import efficientdet_d1
 from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, VOC_Dataset
 from tensorboardX import SummaryWriter
 from torchvision.datasets import VOCDetection
@@ -41,7 +41,7 @@ def main():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
-    model = efficientdet_d0(False, num_classes=len(labels_map))
+    model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     train_dataset = VOC_Dataset(VOCDetection(voc_dir, image_set="train"))

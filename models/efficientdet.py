@@ -53,7 +53,7 @@ class EfficientDet(nn.Module):
         self.regressor = Regressor(fpn_channels, num_anchors, regressor_classifier_num_repeat,
                                    1e-2, 1e-3, other_norm_layer)
         self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, (3, 4, 5, 6, 7))
-        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, divide_line=1 / 9)
+        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, beta=1 / 9)
         self.postprocess = PostProcess()
 
     def forward(self, image_list, targets=None, image_size=None, score_thresh=None, nms_thresh=None):
