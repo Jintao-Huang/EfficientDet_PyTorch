@@ -2,7 +2,7 @@
 # Time: 2020-5-21
 
 from utils.detection import XMLProcessor
-from utils.utils import save_to_pickle
+from utils.utils import save_to_pickle, load_from_pickle
 import os
 
 # --------------------------------
@@ -36,7 +36,9 @@ colors_map = None
 xml_processor = XMLProcessor(root_dir, images_folder, annos_folder, labels, None)
 xml_processor.parse_xmls()
 pkl_dir = os.path.join(root_dir, "pkl")
+pkl_path = os.path.join(pkl_dir, pkl_fname)
 os.makedirs(pkl_dir, exist_ok=True)
-save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), os.path.join(pkl_dir, pkl_fname))
+save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
 xml_processor.test_dataset()
-xml_processor.show_dataset(colors_map, random=True)
+# xml_processor.image_fname_list, xml_processor.target_list = load_from_pickle(pkl_path)
+xml_processor.show_dataset(colors_map, random=False)

@@ -83,7 +83,7 @@ class VOC_Dataset(MyDataset):
         root_dir = os.path.join(root, "VOCdevkit", "VOC%s" % year)
         pkl_dir = os.path.join(root_dir, "pkl")
         os.makedirs(pkl_dir, exist_ok=True)
-        pkl_path = os.path.join(pkl_dir, "voc_%s_%s" % (year, image_set))
+        pkl_path = os.path.join(pkl_dir, "voc_%s_%s.pkl" % (year, image_set))
         if os.path.exists(pkl_path):
             image_fname_list, target_list = load_from_pickle(pkl_path)
         else:
