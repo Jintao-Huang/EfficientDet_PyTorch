@@ -19,9 +19,9 @@ def weighted_binary_focal_loss(pred, target, alpha=0.25, gamma=2.):
 
     # target == -1. It's neither a positive sample nor a negative sample.
     return torch.sum(
-        torch.where((target == 0.) | (target == -1), torch.tensor(0.),
+        torch.where((target == 0.) | (target == -1), torch.tensor(0., device=target.device),
                     alpha * (1 - pred) ** gamma * target * -torch.log(pred)) +
-        torch.where((target == 1.) | (target == -1), torch.tensor(0.),
+        torch.where((target == 1.) | (target == -1), torch.tensor(0., device=target.device),
                     (1 - alpha) * pred ** gamma * (1 - target) * -torch.log(1 - pred)))
 
 
