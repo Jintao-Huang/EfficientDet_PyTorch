@@ -4,7 +4,7 @@ from .ap_counter import APCounter
 from .checker import Checker
 from .logger import Logger
 from .lr_scheduler import LRScheduler
-from .my_dataset import MyDataset, get_dataset_from_pickle
+from .my_dataset import MyDataset, get_dataset_from_pickle, VOC_Dataset
 from .predictor import Predictor
 from .saver import Saver
 from .tester import Tester

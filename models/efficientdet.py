@@ -53,7 +53,7 @@ class EfficientDet(nn.Module):
         self.regressor = Regressor(fpn_channels, num_anchors, regressor_classifier_num_repeat,
                                    1e-2, 1e-3, other_norm_layer)
         self.anchor_gen = AnchorGenerator(anchor_base_scale, anchor_scales, anchor_aspect_ratios, (3, 4, 5, 6, 7))
-        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, divide_line=1 / 9)
+        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, beta=1 / 9)
         self.postprocess = PostProcess()
 
     def forward(self, image_list, targets=None, image_size=None, score_thresh=None, nms_thresh=None):
@@ -67,7 +67,10 @@ class EfficientDet(nn.Module):
                 eval模式: result: Dict
         """
         assert isinstance(image_list, list) and isinstance(image_list[0], torch.Tensor)
-        image_size = image_size or self.image_size
+        if image_size:
+            image_size = max(image_size, self.image_size)
+        else:
+            image_size = self.image_size
         # Notice: anchor_size: 32 - 812.7. Please adjust the resolution according to the specific situation
         image_size = min(1920, image_size // 128 * 128)  # 需要被128整除
         image_list, targets = self.preprocess(image_list, targets, image_size)

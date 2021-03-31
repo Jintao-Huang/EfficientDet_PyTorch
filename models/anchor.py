@@ -9,12 +9,11 @@ class AnchorGenerator(nn.Module):
         """
 
         :param base_scale: float. 基准尺度(anchor_size / stride)
-        :param scales: tuple[float]. scales in single feature.
-        :param aspect_ratios: tuple[tuple(H, W)].
+        :param scales: tuple[float] / tuple[tuple[float]]. scales in single feature.
+        :param aspect_ratios: tuple[(H, W))] / tuple[tuple[(H, W)]].
         :param pyramid_levels: tuple[int]
         """
         super(AnchorGenerator, self).__init__()
-        self.scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
         pyramid_levels = pyramid_levels or (3, 4, 5, 6, 7)
         scales = scales or (1., 2 ** (1 / 3.), 2 ** (2 / 3.))
         aspect_ratios = aspect_ratios or ((1., 1.), (0.7, 1.4), (1.4, 0.7))
