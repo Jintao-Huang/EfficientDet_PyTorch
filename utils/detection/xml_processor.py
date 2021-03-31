@@ -32,7 +32,7 @@ class XMLProcessor:
         if isinstance(labels, list):
             labels = dict(zip(labels, range(len(labels))))
         self.labels_str2int = labels
-        self.labels_int2str = list(labels.keys())
+        self.labels_int2str = [k for k, v in labels.items() if v >= 0]
         self.image_fname_list = None  # Len[N_图片]
         # Len[N_图片 * Dict("boxes": shape[NUMi, 4], "labels": shape[NUMi,]]. left, top, right, bottom
         self.target_list = None
@@ -53,9 +53,6 @@ class XMLProcessor:
             image_fname, target = self._get_data_from_xml(xml_fname)
             image_fname_list.append(image_fname)
             target_list.append(target)
-            print("\r>> %d / %d" % (i + 1, len(xml_fname_list)), end="", flush=True)
-        print()
-        print("-------------------------------------------------")
         self.image_fname_list = image_fname_list
         self.target_list = target_list
         self.test_dataset()
@@ -82,7 +79,7 @@ class XMLProcessor:
             ET.parse(anno_path).findall(".//object/bndbox/xmin"),
             ET.parse(anno_path).findall(".//object/bndbox/ymin"),
             ET.parse(anno_path).findall(".//object/bndbox/xmax"),
-            ET.parse(anno_path).findall(".//object/bndbox/xmax"),
+            ET.parse(anno_path).findall(".//object/bndbox/ymax"),
         ))
         if len(data_list) == 0:  # 没有框
             print("| no target in %s. but we still put it in" % image_fname)
@@ -110,6 +107,7 @@ class XMLProcessor:
 
         :return: None
         """
+        print("-------------------------------------------------")
         print("images数量: %d" % len(self.image_fname_list))
         print("targets数量: %d" % len(self.target_list))
         # 获取target各个类的数目
@@ -124,7 +122,7 @@ class XMLProcessor:
         print("classes_num:")
         for object_name, value in classes_num_dict.items():
             print("\t%s: %d" % (object_name, value))
-        print("\tAll: %d" % sum(classes_num_dict.values()))
+        print("\tAll: %d" % sum(classes_num_dict.values()), flush=True)
 
     def show_dataset(self, colors_map=None, random=False):
         """展示数据集，一张张展示

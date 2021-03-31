@@ -35,7 +35,6 @@ def lr_func(epoch):
 
 
 def main():
-    print("配置: %s" % comment, flush=True)
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -45,15 +44,16 @@ def main():
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     # 数据集自行合并(The dataset merges by yourself)
     train_dataset = VOC_Dataset(voc_dir, "0712", "trainval")
-    val_dataset = VOC_Dataset(voc_dir, "0712", "test")
+    test_dataset = VOC_Dataset(voc_dir, "0712", "test")
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
     checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 1000),
-                      Tester(model, val_dataset, batch_size, device, ap_counter, 1000),
+                      Tester(model, test_dataset, batch_size, device, ap_counter, 1000),
                       Saver(model), logger, 8, 2)
     lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
+    print("配置: %s" % comment, flush=True)
     trainer.train((0, 120))
     writer.close()
 
