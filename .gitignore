@@ -9,3 +9,4 @@ runs/
 test.py
 pred.py
 parallel/
+ignore.py
