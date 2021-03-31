@@ -10,11 +10,11 @@ batch_size = 32
 comment = "-d1,wd=4e-5,bs=32,lr=0.05"
 
 # --------------------------------
-root_dir = r'.'
+datasets_dir = r'../datasets'
 images_folder = 'JPEGImages'
 pkl_folder = 'pkl'
 
-train_pickle_fname = "images_targets_train_hflip.pkl"
+train_pickle_fname = "images_targets_train.pkl"
 test_pickle_fname = "images_targets_test.pkl"
 
 labels_map = {
@@ -43,7 +43,6 @@ def lr_func(epoch):
 
 
 def main():
-    print("配置: %s" % comment, flush=True)
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -51,8 +50,8 @@ def main():
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
-    train_dataset = get_dataset_from_pickle(root_dir, train_pickle_fname, images_folder, pkl_folder)
-    test_dataset = get_dataset_from_pickle(root_dir, test_pickle_fname, images_folder, pkl_folder)
+    train_dataset = get_dataset_from_pickle(datasets_dir, train_pickle_fname, images_folder, pkl_folder)
+    test_dataset = get_dataset_from_pickle(datasets_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
@@ -61,6 +60,7 @@ def main():
                       Saver(model), logger, 8, 2)
     lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
+    print("配置: %s" % comment, flush=True)
     trainer.train((0, 120))
     writer.close()
 

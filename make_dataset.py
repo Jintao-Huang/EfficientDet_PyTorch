@@ -6,7 +6,7 @@ from utils.utils import save_to_pickle, load_from_pickle
 import os
 
 # --------------------------------
-root_dir = r'.'  # 数据集所在文件夹
+datasets_dir = r'.'  # 数据集所在文件夹
 images_folder = 'JPEGImages'
 annos_folder = "Annotations"
 pkl_folder = 'pkl'
@@ -33,9 +33,9 @@ labels = {
 # }
 colors_map = None
 # --------------------------------
-xml_processor = XMLProcessor(root_dir, images_folder, annos_folder, labels, None)
+xml_processor = XMLProcessor(datasets_dir, images_folder, annos_folder, labels, None)
 xml_processor.parse_xmls()
-pkl_dir = os.path.join(root_dir, "pkl")
+pkl_dir = os.path.join(datasets_dir, "pkl")
 pkl_path = os.path.join(pkl_dir, pkl_fname)
 os.makedirs(pkl_dir, exist_ok=True)
 save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
