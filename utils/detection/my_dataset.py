@@ -79,7 +79,7 @@ class VOC_Dataset(MyDataset):
         :param transforms: func(image: PIL.Image, target) -> (image: Tensor[C, H, W] RGB, target).
             default: self._default_trans_func
         """
-        assert os.path.exists(root), "Please download VOC_datasets to this path"
+        assert os.path.exists(root), "Please download VOC_dataset to this path"
         root_dir = os.path.join(root, "VOCdevkit", "VOC%s" % year)
         pkl_dir = os.path.join(root_dir, "pkl")
         os.makedirs(pkl_dir, exist_ok=True)
@@ -90,6 +90,7 @@ class VOC_Dataset(MyDataset):
             xml_processor = XMLProcessor(root_dir, labels=self.labels_str2int,
                                          image_set_path=r"./ImageSets/Main/%s.txt" % image_set)
             xml_processor.parse_xmls()
+            xml_processor.test_dataset()
             save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
             image_fname_list, target_list = xml_processor.image_fname_list, xml_processor.target_list
         super(VOC_Dataset, self).__init__(root_dir, image_fname_list, target_list, transforms)

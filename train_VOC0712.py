@@ -24,13 +24,15 @@ def lr_func(epoch):
     elif 3 <= epoch < 5:
         return 0.01
     elif 5 <= epoch < 10:
-        return 0.025
+        return 0.02
     elif 10 <= epoch < 80:
         return 0.05
-    elif 80 <= epoch < 110:
+    elif 80 <= epoch < 100:
         return 0.02
-    elif 110 <= epoch < 115:
+    elif 100 <= epoch < 110:
         return 5e-3
+    elif 110 <= epoch < 115:
+        return 1e-3
     elif 115 <= epoch < 120:
         return 1e-4
 

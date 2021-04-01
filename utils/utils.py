@@ -22,10 +22,13 @@ def load_from_pickle(filepath):
 
 
 def calculate_hash(filepath):
-    with open(filepath, "rb") as f:
-        buffer = f.read()
     sha256 = hashlib.sha256()
-    sha256.update(buffer)
+    with open(filepath, "rb") as f:
+        while True:
+            buffer = f.read(4096)
+            if not buffer:
+                break
+            sha256.update(buffer)
     digest = sha256.hexdigest()
     return digest[:8]
 

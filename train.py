@@ -10,7 +10,7 @@ batch_size = 32
 comment = "-d1,wd=4e-5,bs=32,lr=0.05"
 
 # --------------------------------
-datasets_dir = r'../datasets'
+dataset_dir = r'../dataset'
 images_folder = 'JPEGImages'
 pkl_folder = 'pkl'
 
@@ -50,8 +50,8 @@ def main():
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
-    train_dataset = get_dataset_from_pickle(datasets_dir, train_pickle_fname, images_folder, pkl_folder)
-    test_dataset = get_dataset_from_pickle(datasets_dir, test_pickle_fname, images_folder, pkl_folder)
+    train_dataset = get_dataset_from_pickle(dataset_dir, train_pickle_fname, images_folder, pkl_folder)
+    test_dataset = get_dataset_from_pickle(dataset_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
