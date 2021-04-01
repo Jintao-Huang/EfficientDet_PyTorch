@@ -17,7 +17,7 @@ The meaning of `train_example.py` is to show the format of the model input
 
 4. 自己训练的时候，请使用`EfficientNet`预训练模型、并`Freeze BackboneBN`(推荐使用official)    
 Use 'EfficientNet' pre-training model and 'Freeze BackboneBN' when you train yourself 
-(Official is recommended)   
+(Official is recommended)       
 
 ## Reference
 1. 论文(paper):   
@@ -34,6 +34,9 @@ Use 'EfficientNet' pre-training model and 'Freeze BackboneBN' when you train you
 因为修改了模型，所以我把预训练模型的state_dict进行了重组，并进行发布  
 (Because I changed the model, I reorganized the state_dict for the pretraining model and release it)  
 
+5. VOC0712 数据集链接  
+链接：[https://pan.baidu.com/s/17iop7UBnSGExW64cip-pYw](https://pan.baidu.com/s/17iop7UBnSGExW64cip-pYw)  
+提取码：sdvx  
 
 权重见 release. 或在百度云中下载:  
 链接：[https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA](https://pan.baidu.com/s/1VrO0eBmSHlB8_haEJ7WbuA)   

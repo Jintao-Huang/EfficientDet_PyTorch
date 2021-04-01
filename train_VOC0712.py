@@ -44,6 +44,8 @@ def main():
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     # 数据集自行合并(The dataset merges by yourself)
+    # 链接：https://pan.baidu.com/s/17iop7UBnSGExW64cip-pYw
+    # 提取码：sdvx
     train_dataset = VOC_Dataset(voc_dir, "0712", "trainval")
     test_dataset = VOC_Dataset(voc_dir, "0712", "test")
     ap_counter = APCounter(labels_map, 0.5)
