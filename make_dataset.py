@@ -36,7 +36,7 @@ colors_map = None
 xml_processor = XMLProcessor(dataset_dir, images_folder, annos_folder, labels, None)
 xml_processor.parse_xmls()
 xml_processor.test_dataset()
-pkl_dir = os.path.join(dataset_dir, "pkl")
+pkl_dir = os.path.join(dataset_dir, pkl_folder)
 pkl_path = os.path.join(pkl_dir, pkl_fname)
 os.makedirs(pkl_dir, exist_ok=True)
 save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
