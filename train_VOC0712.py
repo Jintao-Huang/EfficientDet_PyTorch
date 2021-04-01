@@ -1,6 +1,7 @@
 # Author: Jintao Huang
 # Time: 2020-6-7
 # 此程序直接运行即可，不需要make_dataset.py. (This program can be run directly without make_dataset.py)
+# 但请事先下载好数据库并放置到响应位置. (But please download the database in advance and place it in a response location)
 import torch
 from models.efficientdet import efficientdet_d1
 from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, VOC_Dataset
@@ -43,6 +44,8 @@ def main():
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     # 数据集自行合并(The dataset merges by yourself)
+    # 链接：https://pan.baidu.com/s/17iop7UBnSGExW64cip-pYw
+    # 提取码：sdvx
     train_dataset = VOC_Dataset(voc_dir, "0712", "trainval")
     test_dataset = VOC_Dataset(voc_dir, "0712", "test")
     ap_counter = APCounter(labels_map, 0.5)
