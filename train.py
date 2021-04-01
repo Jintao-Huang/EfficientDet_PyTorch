@@ -28,18 +28,22 @@ labels_map = {
 def lr_func(epoch):
     if 0 <= epoch < 1:
         return 1e-4
-    elif 1 <= epoch < 2:
+    elif 1 <= epoch < 3:
         return 1e-3
-    elif 2 <= epoch < 4:
+    elif 3 <= epoch < 5:
         return 0.01
-    elif 4 <= epoch < 6:
-        return 0.025
-    elif 6 <= epoch < 100:
-        return 0.05
-    elif 100 <= epoch < 116:
+    elif 5 <= epoch < 10:
         return 0.02
-    elif 116 <= epoch < 120:
+    elif 10 <= epoch < 80:
+        return 0.05
+    elif 80 <= epoch < 100:
+        return 0.02
+    elif 100 <= epoch < 110:
         return 5e-3
+    elif 110 <= epoch < 115:
+        return 1e-3
+    elif 115 <= epoch < 120:
+        return 1e-4
 
 
 def main():

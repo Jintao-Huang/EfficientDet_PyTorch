@@ -17,7 +17,7 @@ else:
     device = torch.device('cpu')
 
 # pred
-model = efficientdet_d0(False, 20)
+model = efficientdet_d0(False)
 load_params(model, r"./checkpoints/model.pth")
 predictor = Predictor(model, device, None, None)
 predictor.pred_image_and_save(image_path, None, "max", score_thresh, nms_thresh)

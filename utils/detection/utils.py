@@ -7,7 +7,7 @@ def collate_fn(x_y_list):
     """
 
     :param x_y_list: len(N * (x, y))
-    :return: x_list, y_list
+    :return: List[x_list, y_list]
     """
     return [list(samples) for samples in zip(*x_y_list)]
 
