@@ -33,18 +33,30 @@ def lr_func(epoch):
     elif 3 <= epoch < 5:
         return 0.01
     elif 5 <= epoch < 10:
-        return 0.02
+        return 0.025
     elif 10 <= epoch < 80:
         return 0.05
-    elif 80 <= epoch < 100:
+    elif 80 <= epoch < 110:
         return 0.02
-    elif 100 <= epoch < 110:
+    elif 110 <= epoch < 120:
         return 5e-3
-    elif 110 <= epoch < 115:
-        return 1e-3
-    elif 115 <= epoch < 120:
-        return 1e-4
 
+
+# def lr_func(epoch):
+#     if 0 <= epoch < 1:
+#         return 1e-4
+#     elif 1 <= epoch < 2:
+#         return 1e-3
+#     elif 2 <= epoch < 4:
+#         return 0.01
+#     elif 4 <= epoch < 6:
+#         return 0.025
+#     elif 6 <= epoch < 32:
+#         return 0.05
+#     elif 32 <= epoch < 37:
+#         return 0.02
+#     elif 37 <= epoch < 40:
+#         return 5e-3
 
 def main():
     if torch.cuda.is_available():

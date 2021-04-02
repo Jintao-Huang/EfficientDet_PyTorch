@@ -22,13 +22,10 @@ def load_from_pickle(filepath):
 
 
 def calculate_hash(filepath):
-    sha256 = hashlib.sha256()
     with open(filepath, "rb") as f:
-        while True:
-            buffer = f.read(4096)
-            if not buffer:
-                break
-            sha256.update(buffer)
+        buffer = f.read()
+    sha256 = hashlib.sha256()
+    sha256.update(buffer)
     digest = sha256.hexdigest()
     return digest[:8]
 
@@ -82,14 +79,3 @@ def load_params_by_order(model, filepath, strict=True):
         load_state_dict[model_key] = load_state_dict.pop(load_key)
 
     return model.load_state_dict(load_state_dict, strict)
-
-
-def frozen_layers(model, freeze_layers):
-    """冻结层"""
-    for name, parameter in model.named_parameters():
-        for layer in freeze_layers:
-            if layer in name:  # 只要含有名字即可
-                parameter.requires_grad_(False)
-                break
-        else:
-            parameter.requires_grad_(True)
