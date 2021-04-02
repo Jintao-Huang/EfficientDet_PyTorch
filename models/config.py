@@ -7,8 +7,9 @@ from .utils import FrozenBatchNorm2d
 default_config = {
     # backbone
     "pretrained_backbone": True,
-    "backbone_norm_layer": FrozenBatchNorm2d,
-    "backbone_freeze": ("",),  # freeze backbone all
+    "backbone_norm_layer": nn.BatchNorm2d,
+    "backbone_freeze": ["conv_first", "layer1", "layer2"],
+    # "backbone_freeze": [""],  # freeze backbone all
     # anchor:
     "anchor_scales": (1., 2 ** (1 / 3.), 2 ** (2 / 3.)),  # scales on a single feature
     "anchor_aspect_ratios": (0.5, 1., 2.),  # H, W

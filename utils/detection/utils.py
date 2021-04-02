@@ -31,8 +31,8 @@ def to(images, targets, device):
 
 def hflip_image(image, target):
     """水平翻转图片, target
-    :param image: PIL.Image.
-    :param target: Dict
+    :param image: PIL.Image. const
+    :param target: Dict. const
     :return: image_hflip: PIL.Image, target: Dict"""
 
     image = transF.hflip(image)

@@ -31,6 +31,7 @@ targets = [{
     "boxes": torch.tensor([]).to(device).reshape((0, 4))
 }]
 # train
+torch.manual_seed(0)
 model = efficientdet_d0(False, 2).to(device)
 optim = torch.optim.SGD(model.parameters(), 2e-3, 0.9, weight_decay=1e-4, nesterov=True)
 for i in range(10):

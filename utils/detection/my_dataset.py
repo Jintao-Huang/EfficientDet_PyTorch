@@ -93,4 +93,4 @@ class VOC_Dataset(MyDataset):
             xml_processor.test_dataset()
             save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
             image_fname_list, target_list = xml_processor.image_fname_list, xml_processor.target_list
-        super(VOC_Dataset, self).__init__(root_dir, image_fname_list, target_list, transforms)
+        super(VOC_Dataset, self).__init__(root_dir, image_fname_list, target_list, transforms=transforms)
