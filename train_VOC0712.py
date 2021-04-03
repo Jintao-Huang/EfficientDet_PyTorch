@@ -6,11 +6,10 @@ import torch
 from models.efficientdet import efficientdet_d1
 from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, VOC_Dataset
 from tensorboardX import SummaryWriter
-from utils.detection.utils import hflip_image
-import torchvision.transforms as trans
+from utils.detection.utils import train_transforms, test_transforms
 
 batch_size = 24
-comment = "-d1,wd=4e-5,bs=24,lr=0.05,official,freeze_layer2,bn"
+comment = "-d1,wd=4e-5,bs=24,lr=0.05,official,freeze2,bn,hflip"
 
 # --------------------------------
 voc_dir = r'..'
@@ -52,15 +51,6 @@ def lr_func(epoch):
         return 5e-3
 
 
-def hflip_transforms(image, target):
-    if image.mode != "RGB":
-        image = image.convert("RGB")
-    if torch.rand(1) < 0.5:
-        image, target = hflip_image(image, target)
-    image = trans.ToTensor()(image)
-    return image, target
-
-
 def main():
     if torch.cuda.is_available():
         device = torch.device('cuda')
@@ -72,8 +62,8 @@ def main():
     # 数据集自行合并(The dataset merges by yourself)
     # 链接：https://pan.baidu.com/s/17iop7UBnSGExW64cip-pYw
     # 提取码：sdvx
-    train_dataset = VOC_Dataset(voc_dir, "0712", "trainval", transforms=hflip_transforms)
-    test_dataset = VOC_Dataset(voc_dir, "0712", "test")
+    train_dataset = VOC_Dataset(voc_dir, "0712", "trainval", transforms=train_transforms)
+    test_dataset = VOC_Dataset(voc_dir, "0712", "test", transforms=test_transforms)
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)

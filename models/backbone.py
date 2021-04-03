@@ -36,7 +36,8 @@ class EfficientNetWithBiFPN(nn.Sequential):
         backbone = _efficientnet(backbone_name, pretrained_backbone,
                                  norm_layer=backbone_norm_layer, image_size=image_size)
         # freeze layers (自己看效果)进行freeze
-        freeze_layers(backbone, backbone_freeze)
+        if backbone_freeze:
+            freeze_layers(backbone, backbone_freeze)
         return_layers = {"layer3": "P3", "layer5": "P4", "layer7": "P5"}  # "layer2": "P2",
         in_channels_list = efficientnet_out_channels[backbone_name]  # bifpn
         super(EfficientNetWithBiFPN, self).__init__(OrderedDict({

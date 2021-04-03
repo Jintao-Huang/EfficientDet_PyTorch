@@ -1,6 +1,8 @@
 # Author: Jintao Huang
 # Time: 2020-5-18
 import torchvision.transforms.functional as transF
+import torch
+import torchvision.transforms as trans
 
 
 def collate_fn(x_y_list):
@@ -41,3 +43,19 @@ def hflip_image(image, target):
     boxes[:, 0], boxes[:, 2] = width - boxes[:, 2], width - boxes[:, 0]
     labels = target['labels'].clone()
     return image, {"boxes": boxes, "labels": labels}
+
+
+def train_transforms(image, target):
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    if torch.rand(1) < 0.5:
+        image, target = hflip_image(image, target)
+    image = trans.ToTensor()(image)
+    return image, target
+
+
+def test_transforms(image, target):
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    image = trans.ToTensor()(image)
+    return image, target
