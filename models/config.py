@@ -15,7 +15,7 @@ default_config = {
     "anchor_aspect_ratios": (0.5, 1., 2.),  # H, W
     # focal loss
     "alpha": 0.25,
-    "gamma": 2,
+    "gamma": 2,  # 1.5
     # other:
     "other_norm_layer": nn.BatchNorm2d,
 }

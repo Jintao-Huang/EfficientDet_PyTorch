@@ -5,23 +5,23 @@ import torch
 
 
 class APCounter:
-    def __init__(self, labels_map, iou_thresh=0.5):
+    def __init__(self, labels, iou_thresh=0.5):
         """
 
-        :param labels_map: Dict[int: str]
+        :param labels: List[str]
         :param iou_thresh:
         """
         self.iou_thresh = iou_thresh
-        self.label_list = [labels_map[i] for i in range(len(labels_map))]
-        # List[List[tuple(score(float), correct(bool))]]. 每个类一个table
+        self.labels = labels
+        # List[List[tuple(score(float), correct(bool)),...]]. 每个类一个table
         self.pred_table_list = None
         # List[num(int)]. 每个类分别计算
         self.target_num_list = None
 
     def init_table(self):
-        self.pred_table_list = [[] for _ in range(len(self.label_list))]
+        self.pred_table_list = [[] for _ in range(len(self.labels))]
         # List[num(int)]. 每个类分别计算
-        self.target_num_list = [0 for _ in range(len(self.label_list))]
+        self.target_num_list = [0 for _ in range(len(self.labels))]
 
     def add(self, pred_list, target_list):
         """
@@ -48,11 +48,11 @@ class APCounter:
                 self.pred_table_list[pred_label].append((pred_score, correct))
 
     def get_ap_dict(self):
-        ap_list = [0. for _ in range(len(self.label_list))]
+        ap_list = [0. for _ in range(len(self.labels))]
         for i, (pred_table, target_num) in enumerate(zip(self.pred_table_list, self.target_num_list)):
-            recall_list, prec_list = self._calc_pr(pred_table, target_num)
-            ap_list[i] = self._calc_ap(recall_list, prec_list)
-        ap_dict = {label: ap for label, ap in zip(self.label_list, ap_list)}
+            prec_list, recall_list = self._calc_pr(pred_table, target_num)
+            ap_list[i] = self._calc_ap(prec_list, recall_list)
+        ap_dict = {label: ap for label, ap in zip(self.labels, ap_list)}
         return ap_dict
 
     @staticmethod
@@ -96,26 +96,26 @@ class APCounter:
         :return: recall_list: List[NUM], prec_list: List[NUM]
         """
         pred_table = sorted(pred_table, key=lambda x: -x[0])
-        recall_list, prec_list = [], []
+        prec_list, recall_list = [], []
         correct_num = 0
         for i, (_, correct) in enumerate(pred_table):
             pred_num = i + 1  # 预测的次数
             if correct:
                 correct_num += 1  # 正确的次数
-            recall_list.append(correct_num / target_num)
             prec_list.append(correct_num / pred_num)
+            recall_list.append(correct_num / target_num)
 
-        return recall_list, prec_list
+        return prec_list, recall_list
 
     @staticmethod
-    def _calc_ap(recall_list, prec_list):
-        """recall_list(单调递增), prec_list. (recall, prec)为一个点"""
+    def _calc_ap(prec_list, recall_list):
+        """prec_list, recall_list(单调递增). (recall, prec)为一个点"""
 
         # 1. 预处理
-        recall_list.insert(0, 0.)
-        recall_list.append(1.)
         prec_list.insert(0, 0.)
         prec_list.append(0.)
+        recall_list.insert(0, 0.)
+        recall_list.append(1.)
         for i in reversed(range(len(recall_list) - 1)):
             prec_list[i] = max(prec_list[i], prec_list[i + 1])
         # 2. 每个recall值取一个点(prec最高的点)

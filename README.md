@@ -2,8 +2,6 @@
 
 注意事项(NOTICE):  
 1. 训练请使用SGD优化器(with momentum 0.9). 不要使用Adam. 会造成不收敛.   
-推荐lr: Pre_train(1e-4 -> 1e-3 -> 1e-2 -> 3e-2) -> Train(5e-2) -> Post_Train(3e-2 -> 1e-2 -> 1e-3)    
-推荐weight_decay: 4e-5 或 1e-4 (区别不大)   
 Use SGD optimizer for training(with momentum 0.9). Do not use Adam. It will cause a nonconvergence   
 
 2. 有两个分支，一个是按照论文书写(official)、一个是参考`zylo117`的代码(master)，
@@ -15,8 +13,8 @@ please choose according to the actual situation
 3. `train_example.py` 的意义是展示模型输入的格式   
 The meaning of `train_example.py` is to show the format of the model input    
 
-4. 自己训练的时候，请使用`EfficientNet`预训练模型、并`Freeze BackboneBN`(推荐使用official)    
-Use 'EfficientNet' pre-training model and 'Freeze BackboneBN' when you train yourself 
+4. 自己训练的时候，请使用`EfficientNet`预训练模型(推荐使用official)    
+Use 'EfficientNet' pre-training model 
 (Official is recommended)   
 
 ## Reference
@@ -83,5 +81,5 @@ python3 train.py
 
 ## 运行环境(environment)
 
-torch 1.2.0  
-torchvision 0.4.0  
+torch 1.7.1
+torchvision 0.8.2

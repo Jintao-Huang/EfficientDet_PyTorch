@@ -3,13 +3,13 @@
 # 此程序直接运行即可，不需要make_dataset.py. (This program can be run directly without make_dataset.py)
 # 但请事先下载好数据库并放置到响应位置. (But please download the database in advance and place it in a response location)
 import torch
-from models.efficientdet import efficientdet_d1
+from models.efficientdet import efficientdet_d0
 from utils.detection import Trainer, Logger, Tester, Checker, APCounter, Saver, LRScheduler, VOC_Dataset
 from tensorboardX import SummaryWriter
 from utils.detection.utils import train_transforms, test_transforms
 
-batch_size = 24
-comment = "-d1,wd=4e-5,bs=24,lr=0.05,official,freeze2,bn,hflip"
+batch_size = 32
+comment = "-d0,wd=4e-5,bs=32,lr=0.05,official,freeze2,bn,hflip"
 
 # --------------------------------
 voc_dir = r'..'
@@ -56,7 +56,7 @@ def main():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
-    model = efficientdet_d1(False, num_classes=len(labels_map))
+    model = efficientdet_d0(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     # 数据集自行合并(The dataset merges by yourself)
@@ -69,7 +69,7 @@ def main():
     logger = Logger(50, writer)
     checker = Checker(Tester(model, train_dataset, batch_size, device, ap_counter, 1000),
                       Tester(model, test_dataset, batch_size, device, ap_counter, 5000),
-                      Saver(model), logger, 8, 2)
+                      Saver(model), logger, 8, 1)
     lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     print("配置: %s" % comment, flush=True)

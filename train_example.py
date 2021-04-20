@@ -33,7 +33,7 @@ targets = [{
 # train
 torch.manual_seed(0)
 model = efficientdet_d0(False, 2).to(device)
-optim = torch.optim.SGD(model.parameters(), 2e-3, 0.9, weight_decay=1e-4, nesterov=True)
+optim = torch.optim.SGD(model.parameters(), 2e-3, 0.9, weight_decay=1e-4)
 for i in range(10):
     optim.zero_grad()
     loss = model([image_1, image_2], targets)
