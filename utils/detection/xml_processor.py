@@ -55,7 +55,6 @@ class XMLProcessor:
             target_list.append(target)
         self.image_fname_list = image_fname_list
         self.target_list = target_list
-        self.test_dataset()
 
     def _get_data_from_xml(self, xml_fname):
         """get img_fname, target from xml. 并检测图片已经存在

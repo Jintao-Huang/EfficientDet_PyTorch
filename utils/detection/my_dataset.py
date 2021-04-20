@@ -4,9 +4,9 @@
 import torch.utils.data as tud
 import os
 from PIL import Image
-import torchvision.transforms as trans
 from ..utils import load_from_pickle, save_to_pickle
 from .xml_processor import XMLProcessor
+from .utils import test_transforms
 
 
 def get_dataset_from_pickle(root_dir, pkl_name, images_folder=None, pkl_folder=None, transforms=None):
@@ -24,14 +24,14 @@ class MyDataset(tud.Dataset):
         :param target_list: List[Dict]
         :param images_folder: str = "JPEGImages"
         :param transforms: func(image: PIL.Image, target) -> (image: Tensor[C, H, W] RGB, target)
-            默认(self._default_trans_func)
+            默认(test_transforms)
         """
         self.root_dir = root_dir
         self.images_folder = images_folder or "JPEGImages"
         assert len(image_fname_list) == len(target_list)
         self.image_fname_list = image_fname_list
         self.target_list = target_list
-        self.transforms = transforms or self._default_transforms
+        self.transforms = transforms or test_transforms
 
     def __getitem__(self, idx):
         image_fname = self.image_fname_list[idx]
@@ -48,13 +48,6 @@ class MyDataset(tud.Dataset):
 
     def __len__(self):
         return len(self.image_fname_list)
-
-    @staticmethod
-    def _default_transforms(image, target):
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-        image = trans.ToTensor()(image)
-        return image, target
 
 
 class VOC_Dataset(MyDataset):
@@ -79,7 +72,7 @@ class VOC_Dataset(MyDataset):
         :param transforms: func(image: PIL.Image, target) -> (image: Tensor[C, H, W] RGB, target).
             default: self._default_trans_func
         """
-        assert os.path.exists(root), "Please download VOC_datasets to this path"
+        assert os.path.exists(root), "Please download VOC_dataset to this path"
         root_dir = os.path.join(root, "VOCdevkit", "VOC%s" % year)
         pkl_dir = os.path.join(root_dir, "pkl")
         os.makedirs(pkl_dir, exist_ok=True)
@@ -90,6 +83,7 @@ class VOC_Dataset(MyDataset):
             xml_processor = XMLProcessor(root_dir, labels=self.labels_str2int,
                                          image_set_path=r"./ImageSets/Main/%s.txt" % image_set)
             xml_processor.parse_xmls()
+            xml_processor.test_dataset()
             save_to_pickle((xml_processor.image_fname_list, xml_processor.target_list), pkl_path)
             image_fname_list, target_list = xml_processor.image_fname_list, xml_processor.target_list
-        super(VOC_Dataset, self).__init__(root_dir, image_fname_list, target_list, transforms)
+        super(VOC_Dataset, self).__init__(root_dir, image_fname_list, target_list, transforms=transforms)

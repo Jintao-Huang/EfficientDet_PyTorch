@@ -10,7 +10,7 @@ batch_size = 32
 comment = "-d1,wd=4e-5,bs=32,lr=0.05"
 
 # --------------------------------
-datasets_dir = r'../datasets'
+dataset_dir = r'../dataset'
 images_folder = 'JPEGImages'
 pkl_folder = 'pkl'
 
@@ -28,19 +28,35 @@ labels_map = {
 def lr_func(epoch):
     if 0 <= epoch < 1:
         return 1e-4
-    elif 1 <= epoch < 2:
+    elif 1 <= epoch < 3:
         return 1e-3
-    elif 2 <= epoch < 4:
+    elif 3 <= epoch < 5:
         return 0.01
-    elif 4 <= epoch < 6:
+    elif 5 <= epoch < 10:
         return 0.025
-    elif 6 <= epoch < 100:
+    elif 10 <= epoch < 80:
         return 0.05
-    elif 100 <= epoch < 116:
+    elif 80 <= epoch < 110:
         return 0.02
-    elif 116 <= epoch < 120:
+    elif 110 <= epoch < 120:
         return 5e-3
 
+
+# def lr_func(epoch):
+#     if 0 <= epoch < 1:
+#         return 1e-4
+#     elif 1 <= epoch < 2:
+#         return 1e-3
+#     elif 2 <= epoch < 4:
+#         return 0.01
+#     elif 4 <= epoch < 6:
+#         return 0.025
+#     elif 6 <= epoch < 32:
+#         return 0.05
+#     elif 32 <= epoch < 37:
+#         return 0.02
+#     elif 37 <= epoch < 40:
+#         return 5e-3
 
 def main():
     if torch.cuda.is_available():
@@ -50,8 +66,8 @@ def main():
     model = efficientdet_d1(False, num_classes=len(labels_map))
 
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
-    train_dataset = get_dataset_from_pickle(datasets_dir, train_pickle_fname, images_folder, pkl_folder)
-    test_dataset = get_dataset_from_pickle(datasets_dir, test_pickle_fname, images_folder, pkl_folder)
+    train_dataset = get_dataset_from_pickle(dataset_dir, train_pickle_fname, images_folder, pkl_folder)
+    test_dataset = get_dataset_from_pickle(dataset_dir, test_pickle_fname, images_folder, pkl_folder)
     ap_counter = APCounter(labels_map, 0.5)
     writer = SummaryWriter(comment=comment)
     logger = Logger(50, writer)
