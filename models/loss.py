@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 
 def weighted_binary_focal_loss(pred, target, alpha=0.25, gamma=2.):
-    """f(x) = alpha * (1 - x)^a * -ln(sigmoid(pred))
+    """f(x) = alpha * (1 - x)^a * -ln(pred). 已过sigmoid
 
     :param pred: shape = (N,)
     :param target: shape = (N,)
